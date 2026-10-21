@@ -1,0 +1,65 @@
+<svg viewBox="0 0 710 390" xmlns="http://www.w3.org/2000/svg" font-family="Times New Roman, serif" font-size="12">
+  <rect width="100%" height="100%" fill="#fff"/>
+  <defs>
+    <marker id="ar" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#222"/></marker>
+  </defs>
+  <!-- grupos -->
+  <rect x="5" y="25" width="215" height="360" rx="6" fill="#f3f6fb" stroke="#333"/>
+  <text x="112" y="45" text-anchor="middle" font-weight="bold" font-size="13">Cliente móvil (Android)</text>
+  <rect x="290" y="25" width="180" height="360" rx="6" fill="#f4f8f1" stroke="#333"/>
+  <text x="380" y="45" text-anchor="middle" font-weight="bold" font-size="13">Backend (Supabase)</text>
+  <rect x="540" y="25" width="165" height="360" rx="6" fill="#fbf6ee" stroke="#333"/>
+  <text x="622" y="45" text-anchor="middle" font-weight="bold" font-size="13">Servicios externos</text>
+  <!-- cliente -->
+  <g fill="#fff" stroke="#333">
+    <rect x="18" y="60" width="190" height="40" rx="4"/><rect x="18" y="112" width="190" height="40" rx="4"/>
+    <rect x="18" y="164" width="190" height="40" rx="4"/><rect x="18" y="216" width="190" height="40" rx="4"/>
+    <rect x="18" y="268" width="190" height="40" rx="4"/><rect x="18" y="320" width="190" height="52" rx="4"/>
+  </g>
+  <g text-anchor="middle" fill="#000">
+    <text x="113" y="85">UI – Jetpack Compose</text>
+    <text x="113" y="137">ViewModel + StateFlow (MVVM)</text>
+    <text x="113" y="189">Repositorios</text>
+    <text x="113" y="241">Room (caché local)</text>
+    <text x="113" y="293">Retrofit · WorkManager</text>
+    <text x="113" y="343">CameraX · Ubicación (GPS)</text>
+    <text x="113" y="360">· Mapa OpenStreetMap</text>
+  </g>
+  <!-- backend -->
+  <g fill="#fff" stroke="#333">
+    <rect x="302" y="60" width="156" height="40" rx="4"/><rect x="302" y="112" width="156" height="40" rx="4"/>
+    <rect x="302" y="164" width="156" height="56" rx="4"/><rect x="302" y="232" width="156" height="40" rx="4"/>
+    <rect x="302" y="284" width="156" height="44" rx="4"/><rect x="302" y="340" width="156" height="34" rx="4"/>
+  </g>
+  <g text-anchor="middle" fill="#000">
+    <text x="380" y="85">API REST (PostgREST)</text>
+    <text x="380" y="137">Autenticación (Auth)</text>
+    <text x="380" y="186">Funciones de borde:</text><text x="380" y="203">duplicados · ruteo · prioridad</text>
+    <text x="380" y="257">Storage (fotografías)</text>
+    <text x="380" y="303">PostgreSQL + PostGIS</text><text x="380" y="320">(base de datos geoespacial)</text>
+    <text x="380" y="362">Panel web de la entidad</text>
+  </g>
+  <!-- servicios -->
+  <g fill="#fff" stroke="#333">
+    <rect x="552" y="60" width="141" height="40" rx="4"/><rect x="552" y="112" width="141" height="40" rx="4"/>
+    <rect x="552" y="164" width="141" height="56" rx="4"/><rect x="552" y="284" width="141" height="44" rx="4"/>
+    <rect x="552" y="340" width="141" height="34" rx="4" stroke-dasharray="5 3"/>
+  </g>
+  <g text-anchor="middle" fill="#000">
+    <text x="622" y="77">Mapas OpenStreetMap</text><text x="622" y="92" font-size="10.5">(uso desde el cliente)</text>
+    <text x="622" y="129">Geocodificación inversa</text><text x="622" y="144" font-size="10.5">(uso desde el cliente)</text>
+    <text x="622" y="189">Firebase Cloud</text><text x="622" y="206">Messaging (push)</text>
+    <text x="622" y="303">Datos abiertos:</text><text x="622" y="319">límites distritales</text>
+    <text x="622" y="361">Futuro: Open311 e IA</text>
+  </g>
+  <!-- flechas -->
+  <g stroke="#222" stroke-width="1.4" fill="none" marker-end="url(#ar)">
+    <path d="M220,150 L288,150"/><path d="M288,175 L222,175"/>
+    <path d="M458,192 L550,192" stroke-dasharray="4 3"/>
+    <path d="M550,306 L460,306" stroke-dasharray="4 3"/>
+  </g>
+  <text x="254" y="143" text-anchor="middle" font-size="10">HTTPS/JSON</text>
+  <text x="254" y="192" text-anchor="middle" font-size="10">respuesta</text>
+  <text x="504" y="186" text-anchor="middle" font-size="10">push</text>
+  <text x="505" y="299" text-anchor="middle" font-size="10">capas</text>
+</svg>

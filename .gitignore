@@ -9,8 +9,18 @@
 !.env.example
 google-services.json
 local.properties
+keystore.properties
 *.keystore
 *.jks
+*.p12
+*.pem
+*.key
+*firebase-adminsdk*.json
+service-account*.json
+
+# Binarios de la app (se publican como Release, no en el repo)
+*.apk
+*.aab
 
 # Android / Gradle / IDE
 build/
@@ -29,6 +39,10 @@ dist/
 # Supabase CLI
 supabase/.temp/
 supabase/.branches/
+
+# Varios
+*.log
+.vscode/
 
 # Sistema operativo
 .DS_Store
