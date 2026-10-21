@@ -31,8 +31,9 @@ App de reporte de incidencias urbanas (UNMSM, Desarrollo de Sistemas Móviles 20
 - Commits `tipo: descripción` en español, de 60 caracteres como máximo, sin atribución.
 - Antes de cada commit, revisión con el agente `revisor-codigo`. En los PR que tocan `supabase/`, también `/security-review`.
 
-## Comandos (cuando exista el proyecto Gradle)
-- Tests de `shared`: `./gradlew :shared:allTests`
+## Comandos
+- Tests rápidos del dominio: `./gradlew :shared:jvmTest`. Todos (JVM y Wasm): `./gradlew :shared:allTests`
+- Versiones: `gradle/libs.versions.toml` (Kotlin, Compose Multiplatform, AGP 9 con el plugin Android-KMP, Koin)
 - App: `./gradlew :androidApp:lint :androidApp:testDebugUnitTest`
 - Panel: `./gradlew :webPanel:wasmJsBrowserDevelopmentRun`
 - Base de datos: `supabase start` y `supabase test db`

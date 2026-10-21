@@ -31,6 +31,30 @@ app-civika/
 └─ docs/        Arquitectura, diseño, plan, guía de herramientas y entregables
 ```
 
+## Cómo ejecutar
+
+**Requisitos:** JDK 21 y Android SDK (viene con Android Studio). No hace falta instalar Gradle: el proyecto trae
+`gradlew`. Crea `local.properties` en la raíz con la ruta de tu SDK (este archivo no se sube):
+
+```properties
+sdk.dir=C:/Users/TU_USUARIO/AppData/Local/Android/Sdk
+```
+
+| Qué | Comando |
+|---|---|
+| Pruebas rápidas del dominio | `./gradlew :shared:jvmTest` |
+| Todas las pruebas de `shared` (JVM y Wasm) | `./gradlew :shared:allTests` |
+| Lint y pruebas de la app | `./gradlew :androidApp:lint :androidApp:testDebugUnitTest` |
+| Instalar la app en un emulador o celular | `./gradlew :androidApp:installDebug` |
+| Panel web en el navegador | `./gradlew :webPanel:wasmJsBrowserDevelopmentRun` (la terminal muestra la URL, normalmente `http://localhost:8080`; tarda unos segundos en pintar). No recompila solo: tras un cambio, detén con Ctrl+C y vuelve a ejecutar. |
+
+**Ver la app en Android:**
+- **Emulador:** Android Studio → *Más acciones* → *Virtual Device Manager* → **+** → un Pixel con la imagen más
+  reciente de «Google APIs» → ▶. Con el emulador encendido, ejecuta `installDebug`.
+- **Celular:** activa *Opciones de desarrollador* (toca 7 veces «Número de compilación») y la *Depuración por USB*,
+  conéctalo y ejecuta `installDebug`.
+- También puedes abrir la carpeta del proyecto en Android Studio (*Open*) y usar el botón ▶ con `androidApp`.
+
 ## Documentación
 
 - [Entregables 1 y 2](docs/entregables-1-y-2.md): problema, ODS, antecedentes, requisitos y arquitectura.
