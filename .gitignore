@@ -1,0 +1,35 @@
+# Entregables originales (contienen datos personales; la versión pública está en docs/)
+/*.pdf
+/*.html
+/*.ps1
+
+# Secretos y configuración local
+.env
+.env.*
+!.env.example
+google-services.json
+local.properties
+*.keystore
+*.jks
+
+# Android / Gradle / IDE
+build/
+.gradle/
+.idea/
+*.iml
+.kotlin/
+captures/
+.externalNativeBuild/
+.cxx/
+
+# Node / panel web
+node_modules/
+dist/
+
+# Supabase CLI
+supabase/.temp/
+supabase/.branches/
+
+# Sistema operativo
+.DS_Store
+Thumbs.db
