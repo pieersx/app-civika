@@ -343,6 +343,8 @@ API REST sobre HTTPS con datos en formato JSON.
 
 *Nota.* Elaboración propia. Las líneas punteadas indican comunicación con servicios externos.
 
+> Versión vigente: [Figura 1 v2](img/v2/arquitectura.svg) (Kotlin Multiplatform).
+
 #### Frontend
 
 Aplicación nativa Android, desarrollada en Kotlin con la arquitectura recomendada por Android (Android Developers,
@@ -391,6 +393,8 @@ notificación de su atención.
 ![Diagrama de flujo del reporte: iniciar sesión, capturar foto y GPS, elegir categoría, comprobar duplicados, crear o apoyar incidente, asignar entidad, actualizar estado y notificar](img/figura-2-flujo-reporte.svg)
 
 *Nota.* Elaboración propia.
+
+> Versión vigente: [Figura 2 v2](img/v2/flujo-reporte.svg) (ruteo automático, ML Kit y verificación ciudadana).
 
 #### Limitaciones del sistema
 

@@ -1,0 +1,17 @@
+version: 2
+updates:
+  # Versiones de gradle/libs.versions.toml (Kotlin, Compose, Koin, supabase-kt…)
+  - package-ecosystem: "gradle"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 5
+    commit-message:
+      prefix: "chore"
+  # Acciones usadas en .github/workflows
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    commit-message:
+      prefix: "chore"

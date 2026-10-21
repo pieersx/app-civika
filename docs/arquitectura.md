@@ -555,7 +555,12 @@ reemplace; no se borra la anterior.
   sugerencia se apaga con un flag. No se envía ninguna foto a un servicio externo.
 
 ### ADR-14. Mantener activo el entorno demo de Supabase
-- **Contexto:** el plan gratis de Supabase pausa el proyecto tras 7 días sin actividad, lo que rompería la demo y la RNF-03.
+- **Contexto:** el plan gratis de Supabase **no vence**: es permanente, pero pausa el proyecto tras 7 días sin
+  actividad, lo que rompería la demo y la RNF-03. Un proyecto pausado se **restaura gratis** desde el dashboard
+  (Project → Restore) dentro de los 90 días siguientes a la pausa. Conserva sus datos y la restauración tarda unos
+  minutos, así que no se deja para el último momento.
+- **Descartado:** abrir varias cuentas para turnarlas. No hace falta, reparte los datos entre proyectos distintos y
+  abrir cuentas para esquivar límites suele estar prohibido en los términos de servicio.
 - **Decisión:** una GitHub Action semanal (`schedule`) hace una consulta liviana de solo lectura con la clave `anon`
   guardada como secreto del repo. Antes de cada presentación se comprueba a mano que el proyecto esté activo.
 - **Consecuencias:** hay un secreto más que mantener en GitHub (la clave `anon` es pública por diseño, pero así no
@@ -567,6 +572,12 @@ reemplace; no se borra la anterior.
 
 Los entregables 1 y 2 son el registro de lo que se presentó. Durante el diseño se ajustó lo siguiente; esta tabla
 sirve para justificar los cambios en el Entregable 3.
+
+**Figuras actualizadas para el informe** (mismo estilo que las del Entregable 2):
+
+| Figura 1 v2: arquitectura | Figura 2 v2: flujo del reporte |
+|---|---|
+| ![Arquitectura v2: cliente Kotlin Multiplatform, backend Supabase y servicios externos](img/v2/arquitectura.svg) | ![Flujo del reporte v2, con sugerencia de ML Kit, duplicados por categoría y ruteo automático](img/v2/flujo-reporte.svg) |
 
 | Lo que decía el entregable | Lo que se hace | Por qué |
 |---|---|---|

@@ -5,7 +5,8 @@ Este documento cubre la **fase 3 (Desarrollo del MVP)** y las **fases 4 y 5 (pru
 [Tablas 5 y 6](entregables-1-y-2.md#311-análisis-de-requisitos).
 
 - **Duración:** 8 semanas, en 4 sprints de 2 semanas.
-- **Equipo:** 5 integrantes de nivel intermedio en Kotlin y Android. Pieers es el tech lead.
+- **Equipo:** 5 integrantes de nivel intermedio en Kotlin y Android, aprobado por el docente (el enunciado dice
+  4 como máximo). Conviene guardar el mensaje o el correo donde lo confirma. Pieers es el tech lead.
 - **Fechas tentativas:** del 26 de octubre al 20 de diciembre de 2026. Se ajustan al calendario del curso.
 - **Stack:** Kotlin Multiplatform (`shared`, `androidApp` y `webPanel`) + Supabase. Ver
   [arquitectura.md](arquitectura.md#8-estructura-de-módulos-kotlin-multiplatform).
@@ -145,9 +146,8 @@ los reportes falsos se mitigan menos (ver «Limitaciones del sistema»).
 
 | Riesgo | Impacto | Qué hacemos |
 |---|---|---|
-| El enunciado permite **máximo 4 integrantes** y el grupo tiene 5 | El profesor podría no aceptar el grupo | Confirmar por escrito con el docente antes del Entregable 3 |
 | Compose para web está en **Beta** | Algún componente del panel puede fallar (por ejemplo, `TextField`) | El panel es interno y sencillo; si algo falla, se simplifica la pantalla (ADR-9) |
-| El plan gratis de Supabase **pausa el proyecto** tras 7 días sin uso | Demo caída | Action semanal de keep-alive y comprobación antes de presentar (ADR-14) |
+| El plan gratis de Supabase **pausa el proyecto** tras 7 días sin uso | Demo caída | Action semanal de keep-alive; si igual se pausa, se restaura gratis desde el dashboard antes de presentar (ADR-14) |
 | ML Kit acierta poco con baches | La sugerencia confunde más de lo que ayuda | Medir el acierto y apagar la sugerencia si es menor al 60 % (ADR-13) |
 | Curva de aprendizaje de KMP | Retrasos en el Sprint 1 | Pieers deja el esqueleto funcionando con ejemplos antes de repartir las tareas |
 
