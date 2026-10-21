@@ -24,6 +24,8 @@ no Claude Code.
 | Herramienta | Para qué en Cívika | Quién la usa más |
 |---|---|---|
 | **context7** (MCP) | Documentación vigente de KMP, Compose Multiplatform, Koin, supabase-kt, MapLibre, CameraX, Room y ML Kit | Todos |
+| `supabase-postgres-best-practices` (skill del proyecto) | Reglas de Supabase/Postgres para esquema, RLS, índices y RPC; se carga antes de tocar SQL | Pieers |
+| `supabase` (skill del proyecto) | CLI, Auth, Storage, Edge Functions y diagnóstico; su auditoría Snyk está en riesgo medio, revisar antes de aplicar | Pieers y Alex |
 | `superpowers:brainstorming` + `writing-plans` | Convertir un issue en un plan con pasos y pruebas | Todos |
 | `superpowers:test-driven-development` | Reglas de `shared/domain`, ViewModels y RPC | Todos |
 | `superpowers:systematic-debugging` | Cuando algo falla y no es obvio por qué | Todos |
@@ -50,6 +52,8 @@ no Claude Code.
   (para `/code-review`), `excalidraw`, `context7`, `playwright` y `chrome-devtools-mcp`.
 - **Personales de Pieers**: el agente `revisor-codigo` y las skills `entorno-windows` y `explicar` están en su
   configuración. Si alguien más las quiere, Pieers puede compartir los archivos.
+- **Skills del proyecto** (en `.agents/skills` y `.claude/skills`): `find-skills`, `supabase` y
+  `supabase-postgres-best-practices`. Se actualizan con `npx skills update`; no se editan a mano.
 
 En Android no hay MCP para controlar el emulador. Las pantallas se verifican con Compose UI Test, y las capturas se
 sacan con `adb exec-out screencap -p > captura.png`.
