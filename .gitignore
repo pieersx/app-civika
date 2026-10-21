@@ -27,8 +27,7 @@ captures/
 .externalNativeBuild/
 .cxx/
 
-# Kotlin Multiplatform / Wasm
-kotlin-js-store/
+# Kotlin Multiplatform / Wasm (kotlin-js-store/ SÍ se sube: es el lockfile de npm del build Wasm)
 node_modules/
 dist/
 

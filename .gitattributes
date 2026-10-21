@@ -1,0 +1,4 @@
+# gradlew es un script de shell: debe tener finales de línea LF aunque el repo se clone en Windows.
+gradlew text eol=lf
+*.bat text eol=crlf
+*.jar binary
