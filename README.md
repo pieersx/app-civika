@@ -30,6 +30,8 @@ app-civika/
 ## Documentación
 
 - [Entregables 1 y 2](docs/entregables-1-y-2.md): problema, ODS, antecedentes, requisitos y arquitectura.
+- [Arquitectura](docs/arquitectura.md): contexto, modelo de datos, estados, permisos y decisiones técnicas (ADR).
+- [Dirección visual](docs/diseno/direccion-visual.md): paleta, tipografía y tokens de diseño.
 - [Plan de desarrollo](docs/plan-desarrollo.md): roles, sprints y flujo de trabajo del equipo.
 - [Cómo contribuir](CONTRIBUTING.md): ramas, commits y pull requests.
 

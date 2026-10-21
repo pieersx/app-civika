@@ -39,7 +39,7 @@ Orden de trabajo de la interfaz:
 | **Pieers** | Tech lead y backend geoespacial | Arquitectura y esqueleto de la app (paquetes por capa, Hilt, Navigation y DI); esquema de Supabase + PostGIS + RLS; RPC de **duplicados**, **ruteo** y **prioridad**; CI; revisión de todos los PR | RF-05, RF-06, RF-09; RNF-03, RNF-04, RNF-05 (RLS, no exponer datos del reportante), RNF-08, RNF-09, RNF-10 |
 | **Emily** | UI/UX y design system | Dirección visual y mockup; tema Material 3 y componentes; Splash, Login/Registro (con consentimiento de datos), Home, Perfil y «Mis reportes»; accesibilidad | RF-01, RF-12; RNF-01, RNF-05 (consentimiento), RNF-07 |
 | **Valeria** | Flujo de reporte | CameraX (hasta 3 fotos); ubicación con Fused Location y ajuste en el mapa; categoría y descripción; pantalla de duplicados; subida a Storage; trabajo sin conexión con Room + WorkManager | RF-02, RF-03, RF-04, RF-15; RNF-11 |
-| **Keyla** | Mapa e incidentes | Mapa (MapLibre con teselas de OpenStreetMap) con marcadores por categoría y estado y filtros; detalle del incidente; historial de estados; botón «Apoyar» | RF-07, RF-08, RF-10; RNF-02 |
+| **Keyla** | Mapa e incidentes | Mapa (MapLibre con teselas de OpenFreeMap, ver ADR-3) con marcadores por categoría y estado y filtros; detalle del incidente; historial de estados; botón «Apoyar» | RF-07, RF-08, RF-10; RNF-02 |
 | **Alex** | Panel web y notificaciones | Panel Vite + TypeScript (login, lista y mapa, cambio de estado y comentarios, moderación); Edge Function + FCM; indicadores por distrito | RF-11, RF-13, RF-14, RF-16 |
 
 **¿Por qué este reparto?** A Pieers le toca la lógica geoespacial (duplicados, ruteo y prioridad), que es la parte más
@@ -52,33 +52,16 @@ cada uno prueba el módulo de otro compañero.
 ## 3. Contrato compartido (lo fija Pieers en la semana 1)
 
 Este contrato es lo que permite trabajar en paralelo. Hasta que esté publicado nadie programa contra el backend real.
+Su versión completa vive en **[arquitectura.md](arquitectura.md)**:
 
-**Tablas (PostgreSQL + PostGIS)**
+- [Modelo de datos](arquitectura.md#6-modelo-de-datos): tablas, claves y restricciones.
+- [Estados del incidente](arquitectura.md#5-estados-del-incidente): transiciones permitidas y quién puede hacer cada una.
+- [Permisos por rol (RLS)](arquitectura.md#7-permisos-por-rol-rls).
+- Funciones RPC: `buscar_duplicados`, `crear_reporte`, `apoyar_incidente` y `cambiar_estado` (ver el
+  [flujo principal](arquitectura.md#4-flujo-principal-crear-un-reporte)).
 
-| Tabla | Para qué sirve |
-|---|---|
-| `usuarios` | Perfil y rol (`ciudadano`, `moderador`, `entidad`). Se enlaza con Supabase Auth |
-| `categorias` | `service_code` (Open311), nombre, ícono y peso para la prioridad |
-| `distritos` | Nombre y polígono (`geometry`) del distrito |
-| `entidades` | Municipalidad o empresa responsable |
-| `reglas_ruteo` | Regla (categoría + distrito) → entidad |
-| `incidentes` | Punto (`geometry`), categoría, `status`, prioridad, distrito, entidad y número de apoyos |
-| `reportes` | Cada envío de un ciudadano, enlazado con su incidente |
-| `fotos` | Ruta en Storage y relación con el reporte |
-| `apoyos` | Único por (usuario, incidente) |
-| `historial_estados` | Estado anterior, estado nuevo, comentario, autor y fecha |
-| `notificaciones` | Token FCM y notificaciones enviadas |
-
-**Funciones RPC**
-
-- `buscar_duplicados(lat, lon, categoria)`: devuelve los incidentes abiertos de la misma categoría a menos de 50 m y
-  dentro de la ventana de tiempo. Usa `ST_DWithin`.
-- `crear_reporte(...)`: crea el incidente o se une a uno existente, asigna el distrito con `ST_Contains`, busca la
-  entidad en `reglas_ruteo`, calcula la prioridad y registra el estado «Reportado».
-
-> La Figura 1 del Entregable 2 habla de «funciones de borde» en sentido general. En la implementación, los
-> duplicados, el ruteo y la prioridad se programan como **funciones RPC en PostgreSQL**, porque necesitan PostGIS y
-> transacciones. Las **Edge Functions** quedan solo para las integraciones externas, como FCM.
+Los duplicados, el ruteo y la prioridad son **funciones RPC en PostgreSQL**. Las Edge Functions quedan solo para FCM
+(ver el [ADR-2](arquitectura.md#adr-2-lógica-geoespacial-en-funciones-rpc-de-sql)).
 
 **En Android:** cada fuente de datos se usa a través de una interfaz (por ejemplo, `IncidenteRepository`) que tiene
 una implementación *fake* con datos de ejemplo. Así Emily, Valeria y Keyla pueden avanzar desde la semana 1, y
@@ -93,7 +76,7 @@ cuando el backend esté listo solo cambia la implementación que se inyecta con 
 | Pieers | Proyecto Android (Compose, Hilt, Navigation, Retrofit, Room); contrato de datos; migraciones de Supabase con RLS; seed del distrito piloto; CI en GitHub Actions (build + tests + lint) |
 | Emily | Dirección visual y mockup en Claude Design; tema y componentes en Compose; Splash y Login/Registro con Supabase Auth (RF-01) |
 | Valeria | Prototipo de CameraX y permisos; obtención de la ubicación con Fused Location; entidades de Room para los reportes pendientes |
-| Keyla | Mapa con MapLibre y teselas de OSM; marcadores con datos del repositorio fake; elección del proveedor de teselas |
+| Keyla | Mapa con MapLibre y el estilo de OpenFreeMap, con su atribución; marcadores con forma de señal y datos del repositorio fake |
 | Alex | Proyecto del panel en Vite + TS; login con supabase-js; proyecto de Firebase y prueba de una notificación push |
 
 **Al cerrar el Sprint 1:** mockup aprobado, CI en verde, login real funcionando y mapa con datos fake.
