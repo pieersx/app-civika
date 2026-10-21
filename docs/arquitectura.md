@@ -84,7 +84,7 @@ sequenceDiagram
     A->>S: Sube las fotos a fotos/{uid}/
     A->>R: crear_reporte(cliente_id, lat, lon, categoria, descripcion, fotos)
     R->>R: Distrito con ST_Covers. Si cae fuera de la zona piloto, error claro
-    R->>R: Entidad con reglas_ruteo. Si hay regla, pasa a Derivado; si no, va a En revisión
+    R->>R: Entidad con reglas_ruteo. Con regla pasa a Derivado, sin regla a En revisión
     R->>R: Inserta incidente, reporte, fotos e historial
     R-->>A: Código CVK-000131
   end
