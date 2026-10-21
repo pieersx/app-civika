@@ -38,6 +38,7 @@ supabase/.branches/
 # Varios
 *.log
 .vscode/
+.playwright-mcp/
 
 # Sistema operativo
 .DS_Store
