@@ -12,6 +12,7 @@ App de reporte de incidencias urbanas (UNMSM, Desarrollo de Sistemas Móviles 20
 - `docs/arquitectura.md`: modelo de datos, estados, permisos y ADR. Si una decisión cambia, se actualiza aquí primero.
 - `docs/diseno/direccion-visual.md`: tokens de diseño. No inventes colores ni tamaños.
 - `docs/plan-desarrollo.md`: roles y sprints.
+- `docs/guia-herramientas.md`: qué skill usar en cada tarea y cómo se actualizan las skills del proyecto.
 - `docs/entregables-1-y-2.md` es histórico: **no** lo uses como fuente de decisiones vigentes.
 
 ## Reglas
