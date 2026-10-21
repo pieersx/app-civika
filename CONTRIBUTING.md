@@ -34,11 +34,17 @@ Valores de `tipo`: `feat`, `fix`, `test`, `docs`, `refactor` o `chore`. Ejemplo:
    ```
    Si git rechaza el `--ff-only`, el autor tiene que rebasar su rama otra vez. Después se borra la rama.
 
-## 5. Reglas que no se negocian
+## 5. Dependencias
+
+Antes de añadir o actualizar una librería, revisa su documentación vigente, con context7 si usas Claude Code (ver la
+[guía de herramientas](docs/guia-herramientas.md)), y fija la versión en `gradle/libs.versions.toml`. Así nadie
+copia ejemplos de APIs viejas.
+
+## 6. Reglas que no se negocian
 
 - Nunca se hace push directo a `main`.
 - Nunca se suben secretos: `.env`, `local.properties`, `google-services.json` ni claves de Supabase.
   El repo es **público**.
-- La clave `service_role` de Supabase solo se guarda en los secretos de las Edge Functions. Nunca va en `android/` ni en
-  `panel-web/`, ni siquiera en variables `VITE_*`, porque esas variables terminan en el navegador.
+- La clave `service_role` de Supabase solo se guarda en los secretos de las Edge Functions. Nunca va en `androidApp/` ni en
+  `webPanel/`: el APK y el código Wasm del navegador se pueden descompilar.
 - No se suben datos personales reales, como fotos con rostros o correos de usuarios de prueba.

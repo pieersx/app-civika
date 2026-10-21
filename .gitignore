@@ -27,7 +27,8 @@ captures/
 .externalNativeBuild/
 .cxx/
 
-# Node / panel web
+# Kotlin Multiplatform / Wasm
+kotlin-js-store/
 node_modules/
 dist/
 

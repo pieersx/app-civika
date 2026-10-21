@@ -10,21 +10,25 @@ Proyecto del **Grupo 10** del curso *Desarrollo de Sistemas Móviles* (UNMSM, FI
 
 ## Stack
 
+Todo el cliente está en **Kotlin Multiplatform**.
+
 | Parte | Tecnología |
 |---|---|
-| App móvil | Kotlin, Jetpack Compose (Material 3), MVVM (ViewModel + StateFlow), Room, Retrofit, WorkManager, CameraX, ubicación de Android, mapa sobre OpenStreetMap |
+| Código común (`shared`) | Dominio y reglas de negocio, repositorios, supabase-kt sobre Ktor, Koin, kotlinx.serialization |
+| App móvil (`androidApp`) | Jetpack Compose (Material 3), MVVM (ViewModel + StateFlow), Room, WorkManager, CameraX, ubicación de Android, MapLibre con teselas de OpenFreeMap, ML Kit |
+| Panel web (`webPanel`) | Compose Multiplatform para web (Kotlin/Wasm) |
 | Backend | Supabase: PostgreSQL + PostGIS, Auth, Storage, Edge Functions |
-| Panel web | Vite + TypeScript + supabase-js |
 | Notificaciones | Firebase Cloud Messaging |
 
 ## Estructura
 
 ```
 app-civika/
-├─ android/     App Android (Kotlin + Compose)
-├─ supabase/    Migraciones SQL, datos semilla y edge functions
-├─ panel-web/   Panel web de la entidad
-└─ docs/        Entregables, plan de desarrollo y diseño
+├─ shared/      Kotlin común: dominio y datos
+├─ androidApp/  App Android del ciudadano (Compose)
+├─ webPanel/    Panel web de la entidad (Compose Web, Wasm)
+├─ supabase/    Migraciones SQL, datos semilla, pruebas pgTAP y edge functions
+└─ docs/        Arquitectura, diseño, plan, guía de herramientas y entregables
 ```
 
 ## Documentación
@@ -32,7 +36,8 @@ app-civika/
 - [Entregables 1 y 2](docs/entregables-1-y-2.md): problema, ODS, antecedentes, requisitos y arquitectura.
 - [Arquitectura](docs/arquitectura.md): contexto, modelo de datos, estados, permisos y decisiones técnicas (ADR).
 - [Dirección visual](docs/diseno/direccion-visual.md): paleta, tipografía y tokens de diseño.
-- [Plan de desarrollo](docs/plan-desarrollo.md): roles, sprints y flujo de trabajo del equipo.
+- [Plan de desarrollo](docs/plan-desarrollo.md): roles, sprints, riesgos y flujo de trabajo del equipo.
+- [Guía de herramientas](docs/guia-herramientas.md): qué skills, plugins y MCP de Claude Code usar en el proyecto.
 - [Cómo contribuir](CONTRIBUTING.md): ramas, commits y pull requests.
 
 ## Equipo

@@ -7,6 +7,10 @@ Este documento cubre la **fase 3 (Desarrollo del MVP)** y las **fases 4 y 5 (pru
 - **Duración:** 8 semanas, en 4 sprints de 2 semanas.
 - **Equipo:** 5 integrantes de nivel intermedio en Kotlin y Android. Pieers es el tech lead.
 - **Fechas tentativas:** del 26 de octubre al 20 de diciembre de 2026. Se ajustan al calendario del curso.
+- **Stack:** Kotlin Multiplatform (`shared`, `androidApp` y `webPanel`) + Supabase. Ver
+  [arquitectura.md](arquitectura.md#8-estructura-de-módulos-kotlin-multiplatform).
+- **Zona piloto:** Ciudad Universitaria de la UNMSM y alrededores
+  ([ADR-12](arquitectura.md#adr-12-zona-piloto-ciudad-universitaria-de-la-unmsm)).
 
 ## 1. ¿Por dónde empezamos?
 
@@ -36,11 +40,11 @@ Orden de trabajo de la interfaz:
 
 | Integrante | Rol | Responsable de | Requisitos |
 |---|---|---|---|
-| **Pieers** | Tech lead y backend geoespacial | Arquitectura y esqueleto de la app (paquetes por capa, Hilt, Navigation y DI); esquema de Supabase + PostGIS + RLS; RPC de **duplicados**, **ruteo** y **prioridad**; CI; revisión de todos los PR | RF-05, RF-06, RF-09; RNF-03, RNF-04, RNF-05 (RLS, no exponer datos del reportante), RNF-08, RNF-09, RNF-10 |
+| **Pieers** | Tech lead y backend geoespacial | Esqueleto KMP (`shared`, `androidApp`, `webPanel`), Koin y reglas de `shared/domain`; esquema de Supabase + PostGIS + RLS; RPC de **duplicados**, **ruteo** y **prioridad**; CI y keep-alive; revisión de todos los PR | RF-05, RF-06, RF-09; RNF-03, RNF-04, RNF-05 (RLS, no exponer datos del reportante), RNF-08, RNF-09, RNF-10 |
 | **Emily** | UI/UX y design system | Dirección visual y mockup; tema Material 3 y componentes; Splash, Login/Registro (con consentimiento de datos), Home, Perfil y «Mis reportes»; accesibilidad | RF-01, RF-12; RNF-01, RNF-05 (consentimiento), RNF-07 |
-| **Valeria** | Flujo de reporte | CameraX (hasta 3 fotos); ubicación con Fused Location y ajuste en el mapa; categoría y descripción; pantalla de duplicados; subida a Storage; trabajo sin conexión con Room + WorkManager | RF-02, RF-03, RF-04, RF-15; RNF-11 |
+| **Valeria** | Flujo de reporte | CameraX (hasta 3 fotos); ubicación con Fused Location y ajuste en el mapa; categoría y descripción; pantalla de duplicados; subida a Storage; trabajo sin conexión con Room + WorkManager; extra: categoría sugerida con ML Kit | RF-02, RF-03, RF-04, RF-15; RNF-01, RNF-11 |
 | **Keyla** | Mapa e incidentes | Mapa (MapLibre con teselas de OpenFreeMap, ver ADR-3) con marcadores por categoría y estado y filtros; detalle del incidente; historial de estados; botón «Apoyar» | RF-07, RF-08, RF-10; RNF-02 |
-| **Alex** | Panel web y notificaciones | Panel Vite + TypeScript (login, lista y mapa, cambio de estado y comentarios, moderación); Edge Function + FCM; indicadores por distrito | RF-11, RF-13, RF-14, RF-16 |
+| **Alex** | Panel web y notificaciones | `webPanel` en Compose Multiplatform, Kotlin/Wasm (login, lista de incidentes, cambio de estado y comentarios, moderación); Edge Function + FCM; indicadores por zona, incluido «% dentro del plazo» | RF-11, RF-13, RF-14, RF-16 |
 
 **¿Por qué este reparto?** A Pieers le toca la lógica geoespacial (duplicados, ruteo y prioridad), que es la parte más
 difícil y la que el Entregable 1 presenta como innovación. Cada uno de los demás tiene un módulo vertical, es decir,
@@ -56,16 +60,16 @@ Su versión completa vive en **[arquitectura.md](arquitectura.md)**:
 
 - [Modelo de datos](arquitectura.md#6-modelo-de-datos): tablas, claves y restricciones.
 - [Estados del incidente](arquitectura.md#5-estados-del-incidente): transiciones permitidas y quién puede hacer cada una.
-- [Permisos por rol (RLS)](arquitectura.md#7-permisos-por-rol-rls).
+- [Permisos por rol](arquitectura.md#7-permisos-por-rol): RLS, vistas y RPC.
 - Funciones RPC: `buscar_duplicados`, `crear_reporte`, `apoyar_incidente` y `cambiar_estado` (ver el
   [flujo principal](arquitectura.md#4-flujo-principal-crear-un-reporte)).
 
 Los duplicados, el ruteo y la prioridad son **funciones RPC en PostgreSQL**. Las Edge Functions quedan solo para FCM
 (ver el [ADR-2](arquitectura.md#adr-2-lógica-geoespacial-en-funciones-rpc-de-sql)).
 
-**En Android:** cada fuente de datos se usa a través de una interfaz (por ejemplo, `IncidenteRepository`) que tiene
-una implementación *fake* con datos de ejemplo. Así Emily, Valeria y Keyla pueden avanzar desde la semana 1, y
-cuando el backend esté listo solo cambia la implementación que se inyecta con Hilt.
+**En `shared`:** cada fuente de datos se usa a través de una interfaz (por ejemplo, `IncidenteRepository`) que tiene
+una implementación *fake* con datos de ejemplo. Así Emily, Valeria, Keyla y Alex pueden avanzar desde la semana 1, en
+la app y en el panel, y cuando el backend esté listo solo cambia la implementación que se inyecta con Koin.
 
 ## 4. Sprints
 
@@ -73,11 +77,11 @@ cuando el backend esté listo solo cambia la implementación que se inyecta con 
 
 | Integrante | Tareas |
 |---|---|
-| Pieers | Proyecto Android (Compose, Hilt, Navigation, Retrofit, Room); contrato de datos; migraciones de Supabase con RLS; seed del distrito piloto; CI en GitHub Actions (build + tests + lint) |
+| Pieers | Proyecto KMP (`shared` con dominio y repos fake, `androidApp` y `webPanel` arrancando), Koin y `libs.versions.toml` revisado con context7; migraciones de Supabase con RLS; seed de las zonas del piloto y las categorías; CI (tests de `shared`, lint de Android, build de Wasm) y keep-alive |
 | Emily | Dirección visual y mockup en Claude Design; tema y componentes en Compose; Splash y Login/Registro con Supabase Auth (RF-01) |
 | Valeria | Prototipo de CameraX y permisos; obtención de la ubicación con Fused Location; entidades de Room para los reportes pendientes |
 | Keyla | Mapa con MapLibre y el estilo de OpenFreeMap, con su atribución; marcadores con forma de señal y datos del repositorio fake |
-| Alex | Proyecto del panel en Vite + TS; login con supabase-js; proyecto de Firebase y prueba de una notificación push |
+| Alex | Pantallas base de `webPanel` (Compose Web) con el tema y los datos fake de `shared`; login con supabase-kt; proyecto de Firebase y prueba de una notificación push |
 
 **Al cerrar el Sprint 1:** mockup aprobado, CI en verde, login real funcionando y mapa con datos fake.
 
@@ -89,7 +93,7 @@ cuando el backend esté listo solo cambia la implementación que se inyecta con 
 | Emily | Home y navegación principal; estados de carga, vacío y error |
 | Valeria | Flujo completo de reporte (foto → GPS → categoría → duplicados → enviar) y subida a Storage |
 | Keyla | Mapa conectado a Supabase; filtros por categoría y estado (RF-08) |
-| Alex | Lista y mapa de incidentes en el panel; cambio de estado con registro en el historial |
+| Alex | Lista de incidentes en el panel, ordenada por prioridad; cambio de estado con registro en el historial |
 
 **Al cerrar el Sprint 2:** un reporte hecho desde el celular aparece en el mapa con la entidad asignada.
 
@@ -112,14 +116,14 @@ cuando el backend esté listo solo cambia la implementación que se inyecta con 
 | Todos | Pruebas cruzadas y corrección de bugs |
 | Pieers | Revisión de seguridad (RLS y secretos); APK firmado; guion de la demo |
 | Emily | Pruebas de usabilidad con 5 o más usuarios (RNF-01); ajustes de UX |
-| Valeria | Pruebas de los casos sin conexión y con GPS impreciso |
-| Keyla | Rendimiento del mapa con 500 incidentes (RNF-02); pruebas de interfaz |
-| Alex | Indicadores por distrito (RF-14); moderación (RF-16) |
+| Valeria | Pruebas de los casos sin conexión y con GPS impreciso; extra: categoría sugerida con ML Kit y medición de su acierto (ADR-13) |
+| Keyla | Rendimiento del mapa con 500 incidentes (RNF-02), con agrupación de marcadores; pruebas de interfaz |
+| Alex | Indicadores por zona y «% dentro del plazo» (RF-14); moderación (RF-16) |
 
 **Al cerrar el Sprint 4:** APK de demo, informe de pruebas y presentación final.
 
-**Si falta tiempo, se recorta en este orden:** RF-14 → RF-16 → RF-15. Son de prioridad Media y no rompen el flujo
-principal. *Riesgo:* si se recorta RF-16, la moderación queda reducida a ocultar reportes a mano desde el panel, y
+**Si falta tiempo, se recorta en este orden:** ML Kit (extra) → RF-14 → RF-16 → RF-15. Son de prioridad Media y no
+rompen el flujo principal. *Riesgo:* si se recorta RF-16, la moderación queda reducida a ocultar reportes a mano desde el panel, y
 los reportes falsos se mitigan menos (ver «Limitaciones del sistema»).
 
 ## 5. Flujo de trabajo
@@ -130,10 +134,22 @@ los reportes falsos se mitigan menos (ver «Limitaciones del sistema»).
   fast-forward (ver [CONTRIBUTING](../CONTRIBUTING.md#4-pull-request)) y luego se borra la rama.
 - **Commits:** `tipo: descripción`, en español, con un máximo de 60 caracteres. Más detalle en [CONTRIBUTING](../CONTRIBUTING.md).
 - **Reuniones:** sincronización corta 2 veces por semana y demo al final de cada sprint.
-- **Secretos:** la URL y la clave `anon` de Supabase van en `local.properties` (Android) o en `.env` (panel), y
-  `google-services.json` va en `android/app/`. Ninguno de estos archivos se sube. La clave **`service_role`** solo se
-  guarda en los secretos de las Edge Functions y **nunca** entra en `android/` ni en `panel-web/`, porque cualquiera
-  podría leerla desde el APK o desde el navegador. El repo es público.
+- **Secretos:** la URL y la clave `anon` de Supabase van en `local.properties`, y `google-services.json` va en
+  `androidApp/`. Ninguno de estos archivos se sube. La clave **`service_role`** solo se guarda en los secretos de las
+  Edge Functions y **nunca** entra en `androidApp/` ni en `webPanel/`, porque cualquiera podría leerla desde el APK o
+  desde el navegador. El repo es público.
+- **Dependencias:** antes de añadir o actualizar una, se consulta su documentación vigente con context7 (ver la
+  [guía de herramientas](guia-herramientas.md)).
+
+## 6. Riesgos
+
+| Riesgo | Impacto | Qué hacemos |
+|---|---|---|
+| El enunciado permite **máximo 4 integrantes** y el grupo tiene 5 | El profesor podría no aceptar el grupo | Confirmar por escrito con el docente antes del Entregable 3 |
+| Compose para web está en **Beta** | Algún componente del panel puede fallar (por ejemplo, `TextField`) | El panel es interno y sencillo; si algo falla, se simplifica la pantalla (ADR-9) |
+| El plan gratis de Supabase **pausa el proyecto** tras 7 días sin uso | Demo caída | Action semanal de keep-alive y comprobación antes de presentar (ADR-14) |
+| ML Kit acierta poco con baches | La sugerencia confunde más de lo que ayuda | Medir el acierto y apagar la sugerencia si es menor al 60 % (ADR-13) |
+| Curva de aprendizaje de KMP | Retrasos en el Sprint 1 | Pieers deja el esqueleto funcionando con ejemplos antes de repartir las tareas |
 
 ### Definición de «terminado»
 
@@ -142,5 +158,5 @@ Una tarea está terminada cuando cumple estas condiciones:
 1. El código está en `main` mediante un PR revisado.
 2. Tiene pruebas unitarias de su lógica, y pasan.
 3. El CI está en verde (build, tests y lint).
-4. Se probó en un dispositivo o emulador con API 26 o superior.
+4. Se probó en un dispositivo o emulador con API 26 o superior, o en el navegador si es del panel.
 5. El issue está cerrado y enlazado al PR.
