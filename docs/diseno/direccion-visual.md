@@ -109,7 +109,11 @@ Los colores de estado **nunca** se usan como colores de una serie de datos.
   todo va en Atkinson.
 - **Texto e interfaz:** [Atkinson Hyperlegible Next](https://fonts.google.com/specimen/Atkinson+Hyperlegible+Next),
   diseñada para personas con baja visión. Se usa en peso 400-700 en `body` y `label`.
-- En Android se cargan como **fuentes descargables** de Google Fonts (`androidx.compose.ui.text.googlefonts`).
+- Las dos fuentes van **empaquetadas** como archivos `.ttf` con Compose Resources (`composeResources/font/`), para
+  que la app Android y el panel web (Wasm) usen exactamente las mismas. Las fuentes descargables de Google Fonts solo
+  existen en Android. Se empaquetan los `.ttf` **estáticos** de cada peso (Bricolage 600 y 700; Atkinson 400 y 700),
+  no la versión variable, porque los ejes de una fuente variable pueden no aplicarse en Wasm. Las dos tienen licencia
+  SIL Open Font License, que permite incluirlas en la app.
 
 | Estilo M3 | Familia | Tamaño / interlineado | Peso |
 |---|---|---|---|

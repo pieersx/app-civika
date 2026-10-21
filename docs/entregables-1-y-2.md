@@ -10,6 +10,9 @@ Escuela Académica Profesional de Ingeniería de Sistemas
 - **Lugar y semestre:** Lima, Perú. Semestre 2026-II
 
 > Versión en Markdown del PDF entregado al curso. Es el mismo contenido, sin los datos de contacto de los integrantes.
+> Es el **registro histórico** de lo que se entregó y no se modifica. Las decisiones vigentes (Kotlin Multiplatform,
+> zona piloto en la Ciudad Universitaria, ML Kit, etc.) están en
+> [arquitectura.md, «Cambios respecto a los entregables»](arquitectura.md#13-cambios-respecto-a-los-entregables).
 
 ## Índice
 
