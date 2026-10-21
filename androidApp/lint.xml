@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<lint>
+    <!-- Lint sugiere mover el ícono adaptativo a mipmap-anydpi porque minSdk es 26, pero AAPT2 no lo encuentra
+         sin el calificador -v26. Se mantiene mipmap-anydpi-v26 a propósito. -->
+    <issue id="ObsoleteSdkInt">
+        <ignore path="src/main/res/mipmap-anydpi-v26" />
+    </issue>
+</lint>
