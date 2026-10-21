@@ -1,0 +1,46 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Pruebas y build
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: 21
+
+      - uses: gradle/actions/setup-gradle@v6
+
+      - name: Pruebas de shared (JVM y Wasm)
+        run: ./gradlew :shared:allTests --console=plain
+
+      - name: Lint, pruebas y APK de Android
+        run: ./gradlew :androidApp:lint :androidApp:testDebugUnitTest :androidApp:assembleDebug --console=plain
+
+      - name: Build del panel web (Wasm)
+        run: ./gradlew :webPanel:wasmJsBrowserDistribution --console=plain
+
+      - name: Guardar reportes si algo falla
+        if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: reportes
+          path: |
+            **/build/reports/
+            **/build/test-results/
