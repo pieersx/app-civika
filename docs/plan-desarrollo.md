@@ -142,14 +142,8 @@ los reportes falsos se mitigan menos (ver «Limitaciones del sistema»).
 - **Dependencias:** antes de añadir o actualizar una, se consulta su documentación vigente con context7 (ver la
   [guía de herramientas](guia-herramientas.md)).
 
-## 6. Riesgos
-
-| Riesgo | Impacto | Qué hacemos |
-|---|---|---|
-| Compose para web está en **Beta** | Algún componente del panel puede fallar (por ejemplo, `TextField`) | El panel es interno y sencillo; si algo falla, se simplifica la pantalla (ADR-9) |
-| El plan gratis de Supabase **pausa el proyecto** tras 7 días sin uso | Demo caída | Action semanal de keep-alive; si igual se pausa, se restaura gratis desde el dashboard antes de presentar (ADR-14) |
-| ML Kit acierta poco con baches | La sugerencia confunde más de lo que ayuda | Medir el acierto y apagar la sugerencia si es menor al 60 % (ADR-13) |
-| Curva de aprendizaje de KMP | Retrasos en el Sprint 1 | Pieers deja el esqueleto funcionando con ejemplos antes de repartir las tareas |
+- **Riesgos y despliegue:** el registro de riesgos está en [riesgos.md](riesgos.md) y se revisa al cerrar cada
+  sprint. La checklist de despliegue y los procedimientos de cuentas están en [despliegue.md](despliegue.md).
 
 ### Definición de «terminado»
 

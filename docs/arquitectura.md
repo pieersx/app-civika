@@ -195,6 +195,7 @@ erDiagram
     int zona_id FK "zona habitual, opcional"
     rol rol "ciudadano | moderador | entidad"
     int entidad_id FK "solo personal de entidad"
+    boolean activo "false = desactivado, no se borra"
   }
   zonas {
     int id PK
@@ -235,6 +236,7 @@ erDiagram
     estado status
     int prioridad
     int apoyos_count
+    int version "concurrencia optimista"
     timestamptz creado_en
   }
   reportes {
@@ -247,6 +249,7 @@ erDiagram
     geography geom "Point, 4326"
     int categoria_sugerida FK "ML Kit, opcional"
     real confianza "0 a 1"
+    boolean ubicacion_simulada "Android detectó GPS falso"
     timestamptz creado_en
   }
   fotos {
@@ -307,6 +310,53 @@ Restricciones que no se ven en el diagrama:
 - El Entregable 2 nombraba una tabla `notificaciones`. Se mantiene como la bandeja de cada usuario (la pantalla de
   notificaciones), y los tokens de FCM se separan en `dispositivos`.
 - Al marcar un incidente como resuelto se borran sus `verificaciones` anteriores, para que cada resolución se vote de cero.
+- **Concurrencia:** `cambiar_estado(incidente_id, nuevo_estado, version_esperada)` solo aplica el cambio si
+  `incidentes.version` coincide. Si dos personas de la entidad cambian el mismo incidente a la vez, la segunda recibe
+  «el incidente cambió, recarga» en lugar de pisar el cambio de la primera. La `version` la incrementa un trigger en
+  **cada** cambio de `status`, también en los del Sistema (ruteo y reapertura).
+- **Ubicación simulada:** si Android detecta GPS falso (`Location.isMock` en API 31+, `isFromMockProvider` antes), el
+  reporte se acepta, pero se marca `ubicacion_simulada = true` y va a En revisión en vez de derivarse solo. Es una
+  mitigación **parcial**: un teléfono con root puede ocultar la simulación.
+
+**Tablas de soporte** (permisos, trazabilidad y privacidad):
+
+```mermaid
+erDiagram
+  usuarios ||--o{ auditoria : "actor de"
+  usuarios ||--o{ comentarios : escribe
+  incidentes ||--o{ comentarios : tiene
+  usuarios ||--o{ consentimientos : acepta
+
+  auditoria {
+    bigint id PK
+    uuid actor_id FK "nulo si fue service_role"
+    text accion "rol_cambiado, cuenta_desactivada, foto_oculta, reporte_rechazado..."
+    text objeto "tabla e id afectados"
+    jsonb antes
+    jsonb despues
+    timestamptz creado_en
+  }
+  comentarios {
+    uuid id PK
+    uuid incidente_id FK
+    uuid autor_id FK
+    visibilidad visibilidad "publico | interno"
+    text texto
+    timestamptz creado_en
+  }
+  consentimientos {
+    uuid usuario_id PK, FK
+    text version_politica PK "p. ej. 2026-10"
+    timestamptz aceptado_en
+  }
+```
+
+- `auditoria` es **solo de inserción**: ninguna política permite `update` ni `delete`, y la llenan triggers sobre
+  `usuarios` (rol, entidad, activo), `fotos` (oculta) y las transiciones a Rechazado. Solo el moderador la lee.
+- `comentarios` reemplaza el texto libre de `historial_estados.comentario`. Los `publico` los ve el ciudadano; los
+  `interno` solo la entidad y la moderación.
+- `consentimientos` guarda qué versión de la política aceptó cada usuario. Si la política cambia, la app vuelve a
+  pedir la aceptación.
 
 **Prioridad (versión inicial, RF-09):** `prioridad = peso_prioridad × 10 + min(apoyos, 50) + días_abierto × 2`,
 más **+20 si se superó** `plazo_objetivo_dias`. La fórmula vive en `shared/domain` (la usan la app y el panel para
@@ -322,32 +372,88 @@ los resueltos. Es el indicador que más le sirve a una entidad (B2G).
 
 ## 7. Permisos por rol
 
-RLS decide **qué filas** ve cada uno; no puede ocultar columnas. Por eso los datos sensibles se protegen con tres
-mecanismos:
+El modelo es **rol + entidad**, no permisos individuales por usuario: es más fácil de razonar, de probar y de auditar.
 
-1. **Vistas** que exponen solo las columnas seguras. La app y el panel leen las vistas, no las tablas:
-   - `incidentes_publicos`, sin `usuario_id` ni nombres.
-   - `historial_publico`, sin `autor_id`.
-   - `reportes_entidad`, sin `usuario_id`, solo para el personal de la entidad.
-2. **RPC** para todas las escrituras con reglas de negocio.
-3. Un **trigger** en `usuarios` que impide cambiar `rol` y `entidad_id` salvo desde migraciones o desde la cuenta de
-   servicio. Así se evita que alguien se dé a sí mismo el rol de moderador.
+### 7.1 Qué puede hacer cada rol
+
+| Rol | Puede | No puede |
+|---|---|---|
+| **Anónimo** | Ver incidentes e indicadores públicos | Ver quién reportó, escribir, cambiar estados |
+| **Ciudadano** | Reportar, apoyar, verificar, denunciar, ver sus reportes, editar su perfil, eliminar su cuenta | Cambiar estados, ver datos de otros, moderar |
+| **Personal de entidad** | Ver los incidentes **de su entidad**, cambiar los estados que le permite §5, comentar, ver los indicadores de su entidad | Ver o tocar otra entidad, moderar, cambiar roles |
+| **Moderador** | Revisar denuncias, ocultar fotos, rechazar, marcar duplicados, devolver a Derivado, leer la auditoría | Cambiar estados operativos de la entidad (En atención, Resuelto), gestionar entidades o roles |
+| **Sistema** | RPC y triggers (ruteo, prioridad, reapertura) | Ser usado por una persona |
+| **Admin del sistema** (fuera de la app) | Crear entidades, zonas y categorías, asignar roles | Existir como pantalla: se hace con el dashboard de Supabase o SQL con `service_role` |
+
+Por eso el enum `Rol` de `shared/domain` tiene CIUDADANO, MODERADOR, ENTIDAD y SISTEMA, pero no ADMIN: el admin
+nunca usa la app.
+
+### 7.2 Decisiones de cuentas (MVP)
+
+1. **Una entidad por usuario** (`usuarios.entidad_id`). Si en el futuro alguien trabaja para dos entidades, se crea
+   la tabla `usuarios_entidades`.
+2. **Un rol por usuario.** La misma persona no puede ser moderadora y personal de entidad a la vez; si hiciera falta,
+   tendría dos cuentas.
+3. **Las cuentas de entidad y de moderador se crean a mano**, con el runbook de [despliegue.md](despliegue.md). El
+   autorregistro siempre crea ciudadanos.
+4. **Los roles solo se cambian con `service_role`** (dashboard o SQL), nunca desde la app, y cada cambio queda en
+   `auditoria`.
+5. **Quien sale de una entidad se desactiva** (`activo = false`). No se borra, porque su historial de cambios debe
+   seguir existiendo. Un usuario inactivo no pasa ninguna política.
+6. **El ciudadano puede eliminar su cuenta** (Ley 29733) con la RPC `eliminar_mi_cuenta()` (`security definer`):
+   - Anonimiza su fila de `usuarios` (nombre y correo fuera, `activo = false`) y después borra su usuario de
+     `auth.users`.
+   - La fila de `usuarios` queda como **lápida anónima**: por eso `usuarios.id` **no** tiene una clave foránea con
+     `on delete cascade` hacia `auth.users`. Si la tuviera, al borrar la cuenta se borrarían en cascada sus reportes y
+     apoyos, que deben conservarse porque forman parte de incidentes públicos y de los indicadores.
+   - Las fotos de sus reportes se conservan, porque no lo identifican (no tienen EXIF ni autor visible). Si pide
+     borrarlas, moderación las oculta y las elimina del bucket.
+   - Para las solicitudes por otro canal existe `eliminar_cuenta(usuario_id)`, ejecutable solo por `service_role` o
+     `postgres` (el runbook de [despliegue.md](despliegue.md)), porque `auth.uid()` no sirve fuera de una sesión.
+
+**MFA:** los moderadores y el personal de entidad deben tener doble factor (TOTP). Se exige de dos formas:
+- Una política **restrictiva** en las tablas que usan, con la condición
+  `rol_actual() = 'ciudadano' or auth.jwt()->>'aal' = 'aal2'`, para que no deje fuera a los ciudadanos.
+- Una comprobación de `aal2` **dentro** de `cambiar_estado` y de las RPC de moderación, porque una función
+  `security definer` no pasa por el RLS.
+
+### 7.3 Cómo se aplica
+
+RLS decide **qué filas** ve cada uno, pero no puede ocultar columnas. Además, en PostgreSQL una vista **se salta el
+RLS** de sus tablas, salvo que se cree con `security_invoker = true`. Por eso:
+
+1. **Lectura pública con RPC, no con vistas.** `listar_incidentes_publicos(zona, filtros)` e
+   `historial_publico(incidente)` son `security definer`, devuelven solo columnas seguras (sin `usuario_id` ni
+   `autor_id`), filtran lo rechazado y lo oculto y se pueden ejecutar como `anon`. Una vista con
+   `security_invoker = true` no sirve aquí: el anónimo no tiene política sobre `incidentes` y el mapa saldría vacío.
+2. **Vistas internas con `security_invoker = true`.** Por ejemplo, `reportes_entidad` (sin `usuario_id`), que
+   respeta el RLS por `entidad_id`.
+3. **RPC** para todas las escrituras con reglas de negocio.
+4. **Un trigger** en `usuarios` impide cambiar `rol`, `entidad_id` y `activo` salvo que lo haga `service_role` o el
+   rol `postgres` (el que usa el SQL Editor del dashboard). Así nadie se da a sí mismo el rol de moderador desde la app.
 
 L = leer, E = escribir, «RPC» = solo a través de una función que valida las reglas.
 
 | Recurso | Anónimo | Ciudadano | Personal de entidad | Moderador |
 |---|---|---|---|---|
-| `incidentes_publicos` (vista) | L | L | L | L |
-| `historial_publico` (vista) | L | L | L | L |
-| `incidentes` (tabla) | — | E vía RPC | cambia estado vía RPC, solo los suyos | L; cambia estado vía RPC |
+| Incidentes públicos (RPC) | L | L | L | L |
+| Historial público (RPC) | L | L | L | L |
+| `incidentes` (tabla) | — | E vía RPC | L los de su entidad; cambia estado vía RPC | L; cambia estado vía RPC |
 | `reportes` | — | L los propios; E vía RPC | L vía `reportes_entidad` | L |
 | `fotos` (URL firmada vía RPC) | L si no está oculta | L; E en su carpeta `{uid}/` | L | L; puede ocultarlas |
 | `apoyos` | — | E vía RPC y borrar el propio | — | L |
 | `denuncias` | — | E | — | L y E |
 | `verificaciones` | — | E la propia (si sigue el incidente) | — | L |
 | `notificaciones` | — | L y marcar como leída las propias | — | — |
-| `usuarios` | — | L y E la propia fila (`nombre`, `zona_id`) | L la propia | L |
+| `usuarios` | — | L y E la propia fila (`nombre`, `zona_id`); eliminar vía RPC | L la propia | L |
+| `comentarios` | `publico` vía la RPC `comentarios_publicos(incidente)` | L los `publico` | L y E en su entidad (`publico` o `interno`) | L |
+| `auditoria` | — | — | — | L |
+| `consentimientos` | — | L y E los propios | L y E los propios | L y E los propios |
 | `categorias`, `zonas`, `entidades` | L | L | L | L |
+
+Las políticas del personal de entidad comparan siempre `incidentes.entidad_id = (select entidad_id from usuarios
+where id = auth.uid())`. Las pruebas pgTAP crean dos entidades (A y B) y comprueban que el personal de A **no** ve ni
+cambia nada de B.
 
 **Reglas para las funciones `security definer`** (las que se ejecutan con permisos de su dueño):
 - Todas declaran `set search_path = ''` y usan nombres completos (`public.incidentes`). Así nadie puede colarles una
@@ -422,12 +528,17 @@ Reglas:
 | Dominio | `kotlin.test` + kotlinx-coroutines-test en `shared/commonTest` (corre en JVM y Wasm) | Reglas puras: estados permitidos, prioridad, plazo vencido y formato del código |
 | ViewModel | Turbine + repositorios fake | Que cada acción produzca el `UiState` correcto |
 | Datos locales | Room en memoria | DAOs y la cola de reportes pendientes |
-| UI | Compose UI Test | Flujo de reporte y etiquetas de accesibilidad |
-| Base de datos | pgTAP (`supabase test db`) | `buscar_duplicados` (en metros), `crear_reporte` (idempotencia, fuera de zona y sin regla), `cambiar_estado`, las políticas RLS y el trigger que protege `rol` |
-| Panel | Prueba de humo E2E con Playwright sobre el build de `webPanel` | Login, cambio de estado y moderación |
+| E2E Android | Compose UI Test (`androidTest`) en emulador | Flujo de reporte completo, apoyo, estados vacío y error, etiquetas de TalkBack |
+| Base de datos | pgTAP (`supabase test db`) | `buscar_duplicados` (en metros), `crear_reporte` (idempotencia, fuera de zona y sin regla), `cambiar_estado` (roles y `version`), RLS con entidades A y B, el trigger que protege `rol` y la RPC pública sin columnas sensibles |
+| E2E panel | Playwright sobre el build de `webPanel`, con capturas comparadas | Carga, login, cambio de estado y moderación |
+| Rendimiento | Chrome DevTools (Lighthouse *performance*, pestaña Network) | Tamaño del Wasm, tiempo hasta la primera pantalla |
 
 El CI (GitHub Actions) ejecuta en cada PR los tests de `shared` (`allTests`), el lint y los tests de `androidApp`,
-`supabase test db` y el build de `webPanel` (`wasmJsBrowserDistribution`).
+`supabase test db` y el build de `webPanel` (`wasmJsBrowserDistribution`). Los E2E con emulador corren solo en `main`
+o en los PR con la etiqueta `e2e`, porque tardan varios minutos (ADR-15).
+
+**Los permisos se prueban en la base de datos, no en la interfaz.** Esconder un botón no es seguridad: lo que impide
+que el personal de la entidad A cambie un incidente de B es el RLS, y eso lo prueba pgTAP.
 
 ## 11. Seguridad y privacidad
 
@@ -445,6 +556,19 @@ El CI (GitHub Actions) ejecuta en cada PR los tests de `shared` (`allTests`), el
   y ese texto avisa que la ubicación se envía a Nominatim (OpenStreetMap) para obtener la dirección. Se guarda solo
   lo necesario: nombre, correo y zona habitual (opcional).
 - **No es un canal de emergencias:** la app lo recuerda en la bienvenida y en el flujo de reporte.
+- **Registro:** captcha en el formulario (Supabase admite Turnstile y hCaptcha) y **correo verificado** para poder
+  reportar. Los límites de Auth de Supabase frenan los intentos masivos de inicio de sesión.
+- **Ubicación pública redondeada:** las RPC públicas devuelven coordenadas redondeadas (unos 10 m), suficiente para el
+  mapa y sin precisión de domicilio. La ubicación exacta solo la ven la entidad y la moderación.
+- **Indicadores sin conteos pequeños:** si una zona y categoría tiene menos de 5 incidentes en el periodo, el
+  indicador se muestra como «menos de 5», para que no se pueda inferir quién reportó.
+- **Fechas:** se guardan en UTC (`timestamptz`) y los cálculos de «días abierto», plazos e indicadores se hacen en
+  `America/Lima`. Si no, un reporte de las 9 p. m. cuenta como del día siguiente.
+- **Compatibilidad de versiones:** las RPC que usa la app se versionan (`crear_reporte_v1`). Un APK viejo instalado
+  en un celular sigue funcionando cuando el esquema cambia, y la versión anterior se retira solo cuando nadie la usa.
+- **Permisos de Android:** cámara y ubicación se piden en el momento de usarlas, no al abrir la app. Las
+  notificaciones (Android 13+) se piden después del primer reporte, explicando para qué sirven. Las fotos de la
+  galería se eligen con el **Photo Picker**, que no necesita permiso de almacenamiento.
 
 ## 12. Decisiones (ADR)
 
@@ -568,6 +692,32 @@ reemplace; no se borra la anterior.
   días sin commits, así que antes de cada presentación hay que confirmar que la Action siga activa. Si el proyecto
   crece, conviene pasar a un plan de pago y quitar esta Action.
 
+### ADR-15. Estrategia E2E: Compose UI Test en Android y capturas en el panel
+- **Contexto:** Compose Multiplatform para web **dibuja todo en un `<canvas>`**: los botones y textos no existen
+  como elementos HTML. Playwright no puede buscar «el botón Guardar» por su texto, y el audit de accesibilidad de
+  Lighthouse no ve el contenido. En Android, Compose sí expone un árbol de semántica que las pruebas pueden leer.
+- **Decisión:**
+  - **Android:** E2E con Compose UI Test en emulador, buscando por `testTag` y por la semántica (textos y
+    descripciones). En el CI se ejecutan con `reactivecircus/android-emulator-runner`, solo en `main` o con la etiqueta `e2e`.
+  - **Panel:** Playwright sobre el build de producción, con **capturas comparadas** (`toHaveScreenshot`) y acciones
+    por coordenadas en pantallas de tamaño fijo (1920x1080 y 390x844). Si la capa de accesibilidad de Compose Web
+    resulta usable, se migran las pruebas a selectores por rol.
+  - **Accesibilidad:** en Android con TalkBack y Accessibility Scanner; en el panel, revisión manual con teclado y
+    contraste de los tokens.
+  - **Chrome DevTools:** solo para rendimiento del panel (tamaño del Wasm, carga).
+- **Consecuencias:** las pruebas del panel con capturas son más frágiles: un cambio de diseño obliga a regenerar las
+  capturas de referencia. Por eso el panel tiene pocos E2E (los flujos principales) y la lógica se prueba en
+  `shared` y en pgTAP.
+
+### ADR-16. Panel publicado en Vercel con build en GitHub Actions
+- **Contexto:** el panel compilado es un sitio estático (HTML, JS y `.wasm`), pero Vercel no trae JDK y no puede
+  compilar Kotlin.
+- **Decisión:** GitHub Actions compila `:webPanel:wasmJsBrowserDistribution` y lo sube con `vercel deploy --prebuilt`
+  usando un token guardado como secreto del repo. `main` va a producción y los PR a una vista previa.
+- **Consecuencias:** las URLs de producción y de vista previa deben estar en las *Redirect URLs* de Supabase Auth, o
+  el inicio de sesión fallará solo en el panel publicado. El plan Hobby de Vercel es para uso no comercial: sirve para
+  el curso, pero un piloto con una municipalidad necesitaría un plan de pago u otro hosting.
+
 ## 13. Cambios respecto a los entregables
 
 Los entregables 1 y 2 son el registro de lo que se presentó. Durante el diseño se ajustó lo siguiente; esta tabla
@@ -591,3 +741,5 @@ sirve para justificar los cambios en el Entregable 3.
 | Tabla `notificaciones` con los tokens | `notificaciones` (bandeja) y `dispositivos` (tokens FCM) | Son dos cosas distintas |
 | Validación ciudadana con apoyos | Apoyos + verificación «¿sigue arreglado?» al resolverse | Evita cierres falsos |
 | Todo reporte pasa por moderación | Ruteo automático y moderación por excepción | Lo pide el RF-06 y no frena el flujo (ADR-8) |
+| Roles: ciudadano, moderador y personal de la entidad | Además: cuentas de entidad creadas a mano, MFA, auditoría, desactivación y eliminación de cuenta con anonimización | Seguridad y Ley 29733 (§7.2) |
+| Panel web básico (sin hosting definido) | Panel publicado en Vercel desde GitHub Actions | Hay una URL estable para la demo (ADR-16) |
