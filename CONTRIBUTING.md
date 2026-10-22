@@ -27,15 +27,25 @@ Valores de `tipo`: `feat`, `fix`, `test`, `docs`, `refactor` o `chore`. Ejemplo:
 2. Abre el PR contra `main` con `Closes #N` en la descripción.
 3. Necesitas **1 revisión aprobada de otra persona** y el **CI en verde**. La auto-revisión no cuenta: el autor
    nunca aprueba su propio PR. El tech lead revisa los PRs de los demás; si el PR es suyo, lo revisa otro
-   colaborador. El CI solo corre si el PR toca código o configuración de build; un PR solo de documentación no lo
-   ejecuta y no lo necesita.
-4. Quien aprueba el PR lo fusiona en modo fast-forward, sin crear un commit de merge:
+   colaborador. Si no hay otro revisor disponible, aplica la excepción del tech lead (apartado 4.1). El CI solo
+   corre si el PR toca código o configuración de build; un PR solo de documentación no lo ejecuta y no lo necesita.
+4. Quien aprueba el PR —o el tech lead en la excepción del apartado 4.1— lo fusiona en modo fast-forward, sin crear
+   un commit de merge:
    ```bash
    git switch main && git pull --ff-only
    git merge --ff-only origin/tipo/descripcion-corta
    git push
    ```
    Si git rechaza el `--ff-only`, el autor tiene que rebasar su rama otra vez. Después se borra la rama.
+
+### 4.1 Excepción del tech lead
+
+Si el PR es de Pieers y no hay otro revisor disponible:
+
+1. El CI debe estar verde. Si el PR solo toca documentación, el CI no aplica.
+2. Deja un comentario en el PR: «Sin revisión independiente disponible; aplico la excepción del tech lead».
+3. Fusiona con `--ff-only` como indica el paso 4. No marques el PR como aprobado: GitHub no permite autoaprobar.
+4. En cuanto haya otro colaborador, vuelve a la regla general.
 
 ## 5. Dependencias
 

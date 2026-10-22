@@ -21,5 +21,5 @@ Closes #
 - [ ] Lo probé en un emulador o dispositivo con API 26 o superior, o en el navegador si es del panel
 - [ ] No hay secretos ni datos personales reales en el diff
 - [ ] `revisor-codigo` revisó el diff antes del commit (y `/security-review` si toca `supabase/` o auth)
-- [ ] El reviewer asignado no es el autor
+- [ ] El reviewer asignado no es el autor; si no hubo revisor, el tech lead dejó constancia de la excepción
 - [ ] Si cambió una decisión, actualicé `docs/arquitectura.md` o `docs/diseno/direccion-visual.md`
