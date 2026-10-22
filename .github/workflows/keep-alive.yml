@@ -1,0 +1,38 @@
+name: Keep-alive demo
+
+# El plan gratuito de Supabase pausa el proyecto tras 7 días sin actividad.
+# Esta consulta semanal de solo lectura mantiene despierto el entorno demo
+# (ADR-14). La clave anon es pública por diseño, pero se guarda como secreto
+# para no escribirla en el repo.
+on:
+  schedule:
+    # Lunes a las 12:00 UTC.
+    - cron: "0 12 * * 1"
+  workflow_dispatch:
+
+permissions: {}
+
+concurrency:
+  group: keep-alive-demo
+  cancel-in-progress: true
+
+jobs:
+  ping:
+    name: Consultar el proyecto demo
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Leer una categoría pública
+        env:
+          SUPABASE_DEMO_URL: ${{ secrets.SUPABASE_DEMO_URL }}
+          SUPABASE_DEMO_ANON_KEY: ${{ secrets.SUPABASE_DEMO_ANON_KEY }}
+        run: |
+          set -euo pipefail
+          if [ -z "${SUPABASE_DEMO_URL:-}" ] || [ -z "${SUPABASE_DEMO_ANON_KEY:-}" ]; then
+            echo "Faltan los secretos SUPABASE_DEMO_URL y SUPABASE_DEMO_ANON_KEY." >&2
+            exit 1
+          fi
+          curl --fail --silent --show-error --retry 2 --max-time 20 \
+            "${SUPABASE_DEMO_URL}/rest/v1/categorias?select=id&limit=1" \
+            -H "apikey: ${SUPABASE_DEMO_ANON_KEY}" \
+            -H "Authorization: Bearer ${SUPABASE_DEMO_ANON_KEY}"

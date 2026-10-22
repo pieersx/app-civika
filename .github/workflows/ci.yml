@@ -16,7 +16,8 @@ on:
       - "gradlew"
       - "gradlew.bat"
       - "kotlin-js-store/**"
-      - ".github/workflows/ci.yml"
+      - "supabase/**"
+      - ".github/workflows/**"
   push:
     branches: [main]
     paths:
@@ -29,7 +30,8 @@ on:
       - "gradlew"
       - "gradlew.bat"
       - "kotlin-js-store/**"
-      - ".github/workflows/ci.yml"
+      - "supabase/**"
+      - ".github/workflows/**"
 
 permissions:
   contents: read
@@ -59,8 +61,8 @@ jobs:
       - name: Lint, pruebas y APK de Android
         run: ./gradlew :androidApp:lint :androidApp:testDebugUnitTest :androidApp:assembleDebug --console=plain
 
-      - name: Build del panel web (Wasm)
-        run: ./gradlew :webPanel:wasmJsBrowserDistribution --console=plain
+      - name: Pruebas y build del panel web (Wasm)
+        run: ./gradlew :webPanel:wasmJsBrowserTest :webPanel:wasmJsBrowserDistribution --console=plain
 
       - name: Guardar reportes si algo falla
         if: failure()
@@ -70,3 +72,24 @@ jobs:
           path: |
             **/build/reports/
             **/build/test-results/
+
+  supabase:
+    name: Base de datos (pgTAP)
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: supabase/setup-cli@v3
+        with:
+          version: 2.121.0
+
+      - name: Levantar Supabase local
+        run: supabase start
+
+      - name: Pruebas de esquema, RLS y RPC
+        run: supabase test db
+
+      - name: Detener Supabase
+        if: always()
+        run: supabase stop --no-backup
