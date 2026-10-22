@@ -31,7 +31,7 @@ no Claude Code.
 | `systematic-debugging` (skill del proyecto) | Cuando algo falla y no es obvio por qué | Todos |
 | `using-git-worktrees` (skill del proyecto) | Trabajar en dos ramas a la vez sin mezclar archivos | Pieers |
 | `finishing-a-development-branch` + `verification-before-completion` | Cerrar una rama con tests y evidencia | Todos |
-| Agente `revisor-codigo` y `/code-review` | Revisión con contexto limpio antes del commit y en el PR | Todos; Pieers en los PR |
+| Agente `revisor-codigo` y `/code-review` | Revisión con contexto limpio antes del commit y en el PR | Todos; Pieers revisa los PRs ajenos y su propio PR lo revisa otro colaborador |
 | `/security-review` | RLS, funciones `security definer`, secretos | Pieers |
 | `mockup-ui` + `frontend-design` (skills del proyecto) | Mockup clicable, dirección visual y especificaciones para Compose | Emily |
 | Checklist de accesibilidad de `CLAUDE.md` | Contraste, TalkBack, foco y áreas táctiles antes de cerrar una pantalla | Emily y quien haga UI |
@@ -94,7 +94,8 @@ sacan con `adb exec-out screencap -p > captura.png`.
 **Pieers: esquema de Supabase (issue #1)**
 1. «Usa context7 para revisar la sintaxis de `geography` y `ST_DWithin` en PostGIS» → `writing-plans`.
 2. Escribe la prueba pgTAP de `buscar_duplicados` (que falle) → la migración → `supabase test db`.
-3. `revisor-codigo` → commit → PR → `/security-review`.
+3. `revisor-codigo` → `/security-review` → commit → PR. Como el PR es tuyo, pide revisión a otro colaborador;
+   tú revisas los PRs del equipo.
 
 **Emily: tema de Compose (issue #2)**
 1. `mockup-ui` sobre el mockup → tabla de tokens de `Color.kt` y `Type.kt`; `frontend-design` para la dirección visual.

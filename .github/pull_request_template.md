@@ -17,7 +17,9 @@ Closes #
 
 - [ ] La rama está rebasada sobre `main` (`git rebase origin/main`)
 - [ ] Hay pruebas unitarias para la lógica nueva y pasan
-- [ ] El CI está en verde (build, tests y lint)
+- [ ] El CI está en verde (si el PR toca código o configuración de build; los PRs solo de docs no lo ejecutan)
 - [ ] Lo probé en un emulador o dispositivo con API 26 o superior, o en el navegador si es del panel
 - [ ] No hay secretos ni datos personales reales en el diff
+- [ ] `revisor-codigo` revisó el diff antes del commit (y `/security-review` si toca `supabase/` o auth)
+- [ ] El reviewer asignado no es el autor
 - [ ] Si cambió una decisión, actualicé `docs/arquitectura.md` o `docs/diseno/direccion-visual.md`

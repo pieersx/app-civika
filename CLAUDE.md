@@ -28,9 +28,12 @@ App de reporte de incidencias urbanas (UNMSM, Desarrollo de Sistemas Móviles 20
 
 ## Git
 - Ramas `tipo/descripcion`. Nunca trabajes en `main`. Antes del PR, `git rebase origin/main`. Cada PR necesita 1
-  revisión y el CI en verde (si toca código; los PR solo de docs no lo ejecutan). La fusión es con `--ff-only` (ver `CONTRIBUTING.md`).
+  revisión aprobada de otra persona y el CI en verde (si toca código; los PR solo de docs no lo ejecutan). El autor
+  nunca aprueba su propio PR: el tech lead revisa los PRs de los demás y su propio PR lo revisa otro colaborador.
+  La fusión es con `--ff-only` (ver `CONTRIBUTING.md`).
 - Commits `tipo: descripción` en español, de 60 caracteres como máximo, sin atribución.
 - Antes de cada commit, revisión con el agente `revisor-codigo`. En los PR que tocan `supabase/`, también `/security-review`.
+- No asignes reviewers ni assignees sin confirmar el roster del equipo.
 
 ## Comandos
 - Tests rápidos del dominio: `./gradlew :shared:jvmTest`. Todos (JVM y Wasm): `./gradlew :shared:allTests`
