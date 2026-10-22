@@ -1,0 +1,6 @@
+# Herramientas para desarrollar Cívika en local.
+# Gradle fija la versión de Kotlin en gradle/libs.versions.toml;
+# aquí solo se declara la CLI de Kotlin (kotlinc).
+[tools]
+java = "temurin-21"
+kotlin = "2.4.21"
