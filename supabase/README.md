@@ -22,7 +22,9 @@ La API local queda en `http://127.0.0.1:54321` y Studio en `http://127.0.0.1:543
 `supabase status`; no se copian al repo.
 
 El bucket privado `fotos` se declara en `config.toml` y se crea al levantar el entorno. Los paths deben empezar por
-el uid del usuario (`fotos/{uid}/...`) porque `crear_reporte` lo valida.
+el uid del usuario (`fotos/{uid}/...`) y `crear_reporte` valida que el objeto exista y que su `owner` sea el usuario
+autenticado. La API no expone `storage_path` a `authenticated`; la descarga de fotos se hará con la RPC `urls_fotos`
+(Sprint 2).
 
 ## Migraciones
 
@@ -40,6 +42,7 @@ No se edita el esquema desde Studio ni se suben cambios manuales a producción. 
 1. `esquema_base`: enums, tablas, índices, triggers, prioridad y funciones internas.
 2. `rls_y_permisos`: RLS, `GRANT` explícitos, helpers de visibilidad y vista `reportes_entidad`.
 3. `rpc_base`: `buscar_duplicados`, `crear_reporte`, `cambiar_estado` y lecturas públicas.
+4. `privacidad_fotos_historial`: oculta `storage_path` y `autor_id` de `authenticated` y valida el dueño de cada foto.
 
 Las tablas nuevas **no** se exponen automáticamente a la Data API. Cada tabla necesita `GRANT` explícito; las
 escrituras con reglas de negocio pasan por RPC `security definer`, no por `UPDATE` directo.
@@ -52,7 +55,8 @@ escrituras con reglas de negocio pasan por RPC `security definer`, no por `UPDAT
 - `crear_reporte` (ruteo, idempotencia, ubicación simulada, fuera de zona y fotos);
 - `buscar_duplicados` (metros, radio y categoría);
 - `cambiar_estado` (rol, entidad, versión, transiciones, MFA y auditoría);
-- RLS de entidades A/B y lectura pública sin datos personales.
+- RLS de entidades A/B y lectura pública sin datos personales;
+- privacidad de fotos e historial: columnas ocultas, dueño del objeto y versiones archivadas.
 
 La CI ejecuta el mismo comando en el job `Base de datos (pgTAP)`.
 

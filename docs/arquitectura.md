@@ -123,8 +123,9 @@ restricción única es (`usuario_id`, `cliente_id`), así que un usuario no pued
 Al no haber un «comprueba y después inserta», tampoco hay condición de carrera entre dos reintentos simultáneos. Si
 WorkManager reintenta tres veces, se crea **un solo** reporte.
 
-**Validaciones de la RPC:** cada ruta de foto debe empezar por `{auth.uid()}/` y existir en el bucket. Además, la
-categoría debe estar activa y el usuario no debe superar el límite anti-spam (sección 11).
+**Validaciones de la RPC:** cada ruta de foto debe empezar por `{auth.uid()}/`, existir en el bucket y pertenecer al
+usuario autenticado (`owner_id`/`owner`); las rutas internas no se exponen a la entidad. Además, la categoría debe
+estar activa y el usuario no debe superar el límite anti-spam (sección 11).
 
 ## 5. Estados del incidente
 

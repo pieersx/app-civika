@@ -28,13 +28,38 @@ update public.usuarios
 set rol = 'moderador'
 where id = '00000000-0000-0000-0000-000000000004';
 
-insert into storage.objects (bucket_id, name, owner)
+insert into storage.objects (bucket_id, name, owner, owner_id, archived_at)
 values
-    ('fotos', '00000000-0000-0000-0000-000000000001/foto-1.jpg', '00000000-0000-0000-0000-000000000001'),
-    ('fotos', '00000000-0000-0000-0000-000000000001/foto-2.jpg', '00000000-0000-0000-0000-000000000001'),
-    ('fotos', '00000000-0000-0000-0000-000000000001/foto-3.jpg', '00000000-0000-0000-0000-000000000001'),
-    ('fotos', '00000000-0000-0000-0000-000000000001/foto-4.jpg', '00000000-0000-0000-0000-000000000001'),
-    ('fotos', '00000000-0000-0000-0000-000000000001/foto-5.jpg', '00000000-0000-0000-0000-000000000001');
+    ('fotos', '00000000-0000-0000-0000-000000000001/foto-1.jpg', '00000000-0000-0000-0000-000000000001', '00000000-0000-0000-0000-000000000001', null),
+    ('fotos', '00000000-0000-0000-0000-000000000001/foto-2.jpg', '00000000-0000-0000-0000-000000000001', '00000000-0000-0000-0000-000000000001', null),
+    ('fotos', '00000000-0000-0000-0000-000000000001/foto-3.jpg', '00000000-0000-0000-0000-000000000001', '00000000-0000-0000-0000-000000000001', null),
+    ('fotos', '00000000-0000-0000-0000-000000000001/foto-4.jpg', '00000000-0000-0000-0000-000000000001', '00000000-0000-0000-0000-000000000001', null),
+    ('fotos', '00000000-0000-0000-0000-000000000001/foto-5.jpg', '00000000-0000-0000-0000-000000000001', '00000000-0000-0000-0000-000000000001', null),
+    ('fotos', '00000000-0000-0000-0000-000000000001/foto-ajena.jpg', '00000000-0000-0000-0000-000000000002', '00000000-0000-0000-0000-000000000002', null),
+    ('fotos', '00000000-0000-0000-0000-000000000001/foto-legacy.jpg', '00000000-0000-0000-0000-000000000001', null, null),
+    ('fotos', '00000000-0000-0000-0000-000000000001/foto-archivada.jpg', '00000000-0000-0000-0000-000000000001', '00000000-0000-0000-0000-000000000001', now());
+
+insert into storage.objects (bucket_id, name, owner, owner_id, is_delete_marker)
+values (
+    'fotos',
+    '00000000-0000-0000-0000-000000000001/foto-delete-marker.jpg',
+    '00000000-0000-0000-0000-000000000001',
+    '00000000-0000-0000-0000-000000000001',
+    true
+);
+
+-- La función privada se prueba como postgres; auth.uid() sale de los claims.
+set local request.jwt.claims = '{"sub":"00000000-0000-0000-0000-000000000001","role":"authenticated"}';
+select lives_ok(
+    $$select private.validar_fotos(array['00000000-0000-0000-0000-000000000001/foto-legacy.jpg'])$$,
+    'validar_fotos acepta un objeto antiguo con owner y owner_id nulo'
+);
+select throws_ok(
+    $$select private.validar_fotos(array['00000000-0000-0000-0000-000000000001/foto-delete-marker.jpg'])$$,
+    '22023',
+    'La foto 00000000-0000-0000-0000-000000000001/foto-delete-marker.jpg no existe en Storage',
+    'validar_fotos rechaza delete markers'
+);
 
 create temp table creados (
     nombre text primary key,
@@ -245,6 +270,38 @@ select throws_ok(
     'crear_reporte exige al menos una foto'
 );
 
+select throws_ok(
+    $$select * from public.crear_reporte(
+        'abababab-abab-abab-abab-abababababab',
+        -12.0565,
+        -77.0850,
+        (select id from public.categorias where service_code = 'vial'),
+        'Reporte con una foto de otra cuenta',
+        array['00000000-0000-0000-0000-000000000001/foto-ajena.jpg'],
+        false,
+        null
+    )$$,
+    '42501',
+    'La foto 00000000-0000-0000-0000-000000000001/foto-ajena.jpg no pertenece al usuario',
+    'crear_reporte rechaza fotos cuyo owner es otro usuario'
+);
+
+select throws_ok(
+    $$select * from public.crear_reporte(
+        'acacacac-acac-acac-acac-acacacacacac',
+        -12.0565,
+        -77.0850,
+        (select id from public.categorias where service_code = 'vial'),
+        'Reporte con una foto archivada',
+        array['00000000-0000-0000-0000-000000000001/foto-archivada.jpg'],
+        false,
+        null
+    )$$,
+    '22023',
+    'La foto 00000000-0000-0000-0000-000000000001/foto-archivada.jpg no existe en Storage',
+    'crear_reporte ignora objetos archivados'
+);
+
 -- ---------------------------------------------------------------------------
 -- Lectura pública: sin autor, sin dirección, coordenadas redondeadas.
 -- ---------------------------------------------------------------------------
@@ -292,9 +349,28 @@ select is(
     'entidad A ve el historial de su incidente'
 );
 select is(
-    (select count(*) from public.fotos where reporte_id in (select id from public.reportes)),
+    (
+        select count(*)
+        from (
+            select id, reporte_id, oculta
+            from public.fotos
+            where reporte_id in (select id from public.reportes)
+        ) f
+    ),
     1::bigint,
-    'entidad A ve solo las fotos de sus reportes'
+    'entidad A ve solo las fotos de sus reportes y sus columnas permitidas'
+);
+select throws_ok(
+    'select storage_path from public.fotos',
+    '42501',
+    null,
+    'entidad A no puede leer storage_path de fotos'
+);
+select throws_ok(
+    'select autor_id from public.historial_estados',
+    '42501',
+    null,
+    'entidad A no puede leer autor_id del historial'
 );
 select throws_ok(
     'select usuario_id from public.reportes',
