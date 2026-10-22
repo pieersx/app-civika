@@ -1,8 +1,11 @@
 # Diagramas de Cívika
 
-Cuatro diagramas, de lo general a lo concreto. Los dos primeros son **macro** (qué piezas hay y cómo se conectan) y los
-dos últimos son **micro** (cómo está organizado el código por dentro). El detalle de cada decisión está en
-[arquitectura.md](../arquitectura.md).
+Cinco diagramas, de lo general a lo concreto:
+- Los dos primeros son **macro**: qué piezas hay y cómo se conectan.
+- El 3 y el 4 son **micro**: cómo está organizado el código por dentro.
+- El 5 es el **proceso**: qué pasa con un reporte, paso a paso.
+
+El detalle de cada decisión está en [arquitectura.md](../arquitectura.md).
 
 ## 1. Arquitectura del sistema (macro)
 
@@ -31,6 +34,18 @@ Las clases que existen hoy en `shared`, con sus atributos y relaciones. En `Esta
 
 ![Diagrama de clases del dominio compartido](04-clases-dominio.drawio.svg)
 
+## 5. Flujo de un reporte (proceso)
+
+El camino principal desde que el ciudadano toma la foto hasta que la entidad lo resuelve. Cada columna (carril) es quién
+hace el paso: el ciudadano, Supabase, la moderación o la entidad. Los rombos son decisiones. Derivado y En revisión
+son estados del incidente (ver [arquitectura.md §5](../arquitectura.md#5-estados-del-incidente)). Para no recargarlo,
+no muestra la subida de fotos a Storage, los errores (por ejemplo, fuera de la zona piloto) ni el rechazo de un reporte.
+
+![Flujo de un reporte por actor: ciudadano, Supabase, moderación y entidad](05-flujo-reporte.drawio.svg)
+
+> Para el informe del curso sigue vigente la [Figura 2 v2](../img/v2/flujo-reporte.svg), con el estilo formal de los
+> entregables. Este diagrama es la versión para el equipo: con íconos y editable.
+
 ## Palabras que aparecen
 
 | Término | Qué significa aquí |
@@ -40,6 +55,7 @@ Las clases que existen hoy en `shared`, con sus atributos y relaciones. En `Esta
 | CI/CD | Integración continua (probar y compilar cada cambio) y despliegue continuo (publicarlo de forma automática). |
 | JWT | El «pase» firmado que Supabase entrega al iniciar sesión; cada petición lo lleva para saber quién eres. |
 | RLS | *Row Level Security*: reglas de PostgreSQL que deciden qué filas puede ver o cambiar cada usuario. |
+| Carril (*swimlane*) | Columna de un diagrama de flujo que agrupa los pasos que hace un mismo actor. |
 | Puerto / adaptador | El puerto es una interfaz (`IncidenteRepository`); el adaptador es una clase que la implementa (`FakeIncidenteRepository`). |
 
 ## Cómo editarlos

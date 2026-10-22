@@ -6,7 +6,7 @@ tener un incidente, quién puede hacer qué y por qué se decidió cada cosa. Cu
 **antes** de cambiar el código.
 
 > **Diagramas con íconos:** en [diagramas/](diagramas/README.md) están la arquitectura del sistema, el flujo de CI/CD,
-> la arquitectura hexagonal y las clases del dominio. Se editan con draw.io.
+> la arquitectura hexagonal, las clases del dominio y el flujo de un reporte por actor. Se editan con draw.io.
 
 ## 1. Vocabulario del dominio
 
