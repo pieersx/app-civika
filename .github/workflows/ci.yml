@@ -1,9 +1,35 @@
 name: CI
 
+# Solo corre cuando cambia algo que se compila o se prueba; los cambios de documentación y de skills no lo activan.
+# Ojo: si algún día el ruleset de main exige este check como obligatorio, un PR que solo cambie docs se quedaría
+# esperándolo para siempre. Antes de exigirlo, añade un job que siempre corra y pase cuando no hay cambios de código.
+# Las dos listas de rutas deben ser iguales.
 on:
   pull_request:
+    paths:
+      - "shared/**"
+      - "androidApp/**"
+      - "webPanel/**"
+      - "gradle/**"
+      - "*.gradle.kts"
+      - "gradle.properties"
+      - "gradlew"
+      - "gradlew.bat"
+      - "kotlin-js-store/**"
+      - ".github/workflows/ci.yml"
   push:
     branches: [main]
+    paths:
+      - "shared/**"
+      - "androidApp/**"
+      - "webPanel/**"
+      - "gradle/**"
+      - "*.gradle.kts"
+      - "gradle.properties"
+      - "gradlew"
+      - "gradlew.bat"
+      - "kotlin-js-store/**"
+      - ".github/workflows/ci.yml"
 
 permissions:
   contents: read

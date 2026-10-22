@@ -25,7 +25,7 @@ Valores de `tipo`: `feat`, `fix`, `test`, `docs`, `refactor` o `chore`. Ejemplo:
 
 1. Antes de abrir el PR, sincroniza tu rama con `main`: `git fetch origin && git rebase origin/main`.
 2. Abre el PR contra `main` con `Closes #N` en la descripción.
-3. Necesitas **1 revisión aprobada** y el **CI en verde**.
+3. Necesitas **1 revisión aprobada** y el **CI en verde**. El CI solo corre si el PR toca código o configuración de build; un PR solo de documentación no lo ejecuta y no lo necesita.
 4. Quien aprueba el PR lo fusiona en modo fast-forward, sin crear un commit de merge:
    ```bash
    git switch main && git pull --ff-only
