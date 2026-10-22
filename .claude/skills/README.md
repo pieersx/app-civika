@@ -29,5 +29,7 @@ Copy-Item .agents\skills\* .claude\skills -Recurse -Force
 - `supabase` y `supabase-postgres-best-practices`: MIT, © Supabase, https://github.com/supabase/agent-skills
 - `commit`, `explicar`, `mejorar-skill` y `mockup-ui`: skills personales de Pieers para Cívika.
 
+El texto completo de las licencias MIT está en [`THIRD_PARTY_NOTICES.md`](../../THIRD_PARTY_NOTICES.md).
+
 Las skills `docx` y `pptx` no se copian al repo: su licencia de Anthropic no permite redistribuirlas. Se usan desde
 la cuenta de cada integrante.

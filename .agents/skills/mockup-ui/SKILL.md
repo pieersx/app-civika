@@ -8,11 +8,11 @@ Tarea: $ARGUMENTS
 
 1. Busca sistema de diseño o componentes en el proyecto (`package.json`, carpeta de componentes, tokens). Si existen, reutilízalos y no preguntes la dirección visual.
 2. Si no existen, usa `frontend-design` y pregunta con AskUserQuestion, una a una y con tu recomendación: referencias (2-3 webs y qué le gusta de cada una), paleta y un solo acento, estilo, tipografía, densidad y layout. Evita iconos sobre cuadros pastel y el look genérico de IA.
-3. Haz el mockup clicable en un Artifact tipo diseño (escritorio 1920x1080 y móvil 390x844) con datos de ejemplo. Placeholders de foto con proporción real y el nombre del archivo futuro; sin fotos de marcas ajenas. Incluye estados: vacío, error, agotado o desactivado, cargando y foco visible con teclado.
+3. Haz el mockup clicable en un Artifact tipo diseño (escritorio 1920x1080 y móvil 390x844) con datos de ejemplo. Placeholders de foto con proporción real y el nombre del archivo futuro; sin fotos de marcas ajenas. Incluye estados: vacío, error, desactivado, cargando y foco visible con teclado.
 4. Pásalo por `frontend-design` y revisa contraste, TalkBack, foco visible y áreas táctiles de 48 dp según `CLAUDE.md`; da los 5 problemas más graves.
 5. Genera la copia local en `<proyecto>/mockup/` y sírvela con `node .agents/skills/mockup-ui/scripts/servidor.mjs <carpeta> 4173` (solo localhost). Si no es viable, explica por qué.
 6. Prueba con Playwright en 3 tandas:
-   - Flujos: añadir, cantidades, errores y éxito.
+   - Flujos: reportar, apoyar, cambiar de estado, errores y éxito.
    - Solo teclado: orden de Tab, Escape y dónde queda el foco.
    - Tamaños en píxeles CSS (lo que debe valer `window.innerWidth`). Obligatorios (mínimos de CLAUDE.md): 1920x1080 (monitor), 1366x768 (laptop antigua) y 390x844 (iPhone y Android grande). Adicionales: 1536x864 (laptop con zoom de Windows 125 %) y 360x800 (Android pequeño). Comprueba sin scroll horizontal y elementos fijos.
    - Objetivos táctiles de al menos 44 px (alto y ancho) en todas las vistas, no solo en el listado: migas de pan, pie de página, formularios, panel y páginas nuevas.

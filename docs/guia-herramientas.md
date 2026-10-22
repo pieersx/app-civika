@@ -55,7 +55,9 @@ no Claude Code.
 - **Opcionales**: `archify` (diagramas) se instala con `npx skills add tt-a1i/archify -y`; los plugins `design` y
   `excalidraw` se instalan con `/plugin`. El flujo actual no depende de ellos.
 - **MCP del proyecto** (en `.mcp.json`): `context7`, `playwright` y `chrome-devtools`. Claude Code pedirá aprobarlos
-  la primera vez que abras el proyecto; `context7` además necesita iniciar sesión con `/mcp`.
+  la primera vez que abras el proyecto; `context7` además necesita iniciar sesión con `/mcp`. Las versiones de
+  `playwright` y `chrome-devtools` están **fijadas** (nada de `@latest`): así nadie ejecuta en su PC una versión nueva
+  sin revisar. Para subirlas, se revisa el changelog del paquete y se cambia la versión en `.mcp.json` en un PR.
 - **Personales de Pieers**: el agente `revisor-codigo` ya está versionado en `.claude/agents/`; la skill
   `entorno-windows` no está en este repo y se comparte aparte.
 
