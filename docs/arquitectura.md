@@ -5,6 +5,9 @@ Este documento es la referencia técnica del equipo. Desarrolla el diseño de la
 tener un incidente, quién puede hacer qué y por qué se decidió cada cosa. Cuando una decisión cambie, se actualiza aquí
 **antes** de cambiar el código.
 
+> **Diagramas con íconos:** en [diagramas/](diagramas/README.md) están la arquitectura del sistema, el flujo de CI/CD,
+> la arquitectura hexagonal y las clases del dominio. Se editan con draw.io.
+
 ## 1. Vocabulario del dominio
 
 | Término | Qué es |
