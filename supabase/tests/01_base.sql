@@ -338,7 +338,7 @@ reset role;
 -- RLS: entidad A ve lo suyo; entidad B no; moderación ve todo.
 -- ---------------------------------------------------------------------------
 set local role authenticated;
-set local request.jwt.claims = '{"sub":"00000000-0000-0000-0000-000000000002","role":"authenticated"}';
+set local request.jwt.claims = '{"sub":"00000000-0000-0000-0000-000000000002","role":"authenticated","aal":"aal2"}';
 
 select is((select count(*) from public.incidentes), 1::bigint, 'entidad A solo ve su incidente');
 select is((select count(*) from public.reportes), 1::bigint, 'entidad A solo ve sus reportes');
@@ -404,7 +404,7 @@ select is(
 
 reset role;
 set local role authenticated;
-set local request.jwt.claims = '{"sub":"00000000-0000-0000-0000-000000000003","role":"authenticated"}';
+set local request.jwt.claims = '{"sub":"00000000-0000-0000-0000-000000000003","role":"authenticated","aal":"aal2"}';
 
 select is((select count(*) from public.incidentes), 1::bigint, 'entidad B solo ve su incidente');
 select throws_ok(
@@ -422,7 +422,7 @@ select throws_ok(
 
 reset role;
 set local role authenticated;
-set local request.jwt.claims = '{"sub":"00000000-0000-0000-0000-000000000004","role":"authenticated"}';
+set local request.jwt.claims = '{"sub":"00000000-0000-0000-0000-000000000004","role":"authenticated","aal":"aal2"}';
 select is((select count(*) from public.incidentes), 4::bigint, 'moderación ve todos los incidentes');
 select is((select count(*) from public.reportes), 4::bigint, 'moderación ve todos los reportes');
 select is(
