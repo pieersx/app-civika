@@ -1,0 +1,7 @@
+# Versiones de herramientas del proyecto (LTS donde existe; revisado el 2026-10-22).
+# Instalar: mise install
+# Gradle no va aquí: se usa ./gradlew (versión en gradle/wrapper/gradle-wrapper.properties).
+[tools]
+java = "temurin-21"  # el código compila a JVM 17; el CI usa Temurin 21
+node = "24"          # LTS; lo usan npx y los MCP de .mcp.json
+supabase = "2.121.0" # mantener igual que .github/workflows/ci.yml
