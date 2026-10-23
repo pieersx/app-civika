@@ -421,6 +421,11 @@ nunca usa la app.
 - Una comprobación de `aal2` **dentro** de `cambiar_estado` y de las RPC de moderación, porque una función
   `security definer` no pasa por el RLS.
 
+La política está en la migración `20261022180000_mfa_restrictivo.sql` y se prueba en `supabase/tests/02_mfa.sql`.
+`supabase/config.toml` activa TOTP solo en el entorno **local**: en Supabase Cloud el MFA se activa en el panel del
+proyecto (Authentication). Antes de desplegar hay que comprobar que el plan del proyecto lo permita: sin MFA,
+moderación y entidad no pueden llegar a `aal2` y quedan sin acceso a las tablas internas.
+
 ### 7.3 Cómo se aplica
 
 RLS decide **qué filas** ve cada uno, pero no puede ocultar columnas. Además, en PostgreSQL una vista **se salta el
