@@ -423,8 +423,9 @@ nunca usa la app.
 
 La política está en la migración `20261022180000_mfa_restrictivo.sql` y se prueba en `supabase/tests/02_mfa.sql`.
 `supabase/config.toml` activa TOTP solo en el entorno **local**: en Supabase Cloud el MFA se activa en el panel del
-proyecto (Authentication). Antes de desplegar hay que comprobar que el plan del proyecto lo permita: sin MFA,
-moderación y entidad no pueden llegar a `aal2` y quedan sin acceso a las tablas internas.
+proyecto (Authentication). El plan gratuito incluye el MFA básico (TOTP); solo el MFA por teléfono es de pago y no
+se usa (según <https://supabase.com/pricing>, comprobado el 2026-10-22). Sin MFA activo, moderación y entidad no
+pueden llegar a `aal2` y quedan sin acceso a las tablas internas.
 
 ### 7.3 Cómo se aplica
 
