@@ -59,7 +59,7 @@ no Claude Code.
   `playwright` y `chrome-devtools` están **fijadas** (nada de `@latest`): así nadie ejecuta en su PC una versión nueva
   sin revisar. Para subirlas, se revisa el changelog del paquete y se cambia la versión en `.mcp.json` en un PR.
 - **Personales de Pieers**: el agente `revisor-codigo` sí está versionado en `.claude/agents/`. Las skills `commit`,
-  `explicar`, `mejorar-skill`, `mockup-ui` y `entorno-windows` viven en su equipo (`~/.agents/skills`) y **no** están
+  `explicar`, `mejorar-skill`, `mockup-ui` y `entorno-windows` viven en su equipo (`~/.claude/skills`) y **no** están
   en este repo; se comparten aparte si hacen falta.
 
 ### Instalar (por comandos, en tu equipo)
@@ -77,7 +77,7 @@ En la terminal, para las skills de Supabase (`-g` = para tu usuario, no para el 
 npx skills add supabase/agent-skills -g -a claude-code -s supabase -s supabase-postgres-best-practices -y
 ```
 
-Para ver qué hay antes de instalar: `npx skills add <repositorio> --list`. Para actualizar: `npx skills update -g`.
+Las skills quedan en `~/.claude/skills` (comprobado el 2026-10-22). Para ver qué hay antes de instalar: `npx skills add <repositorio> --list`. Para actualizar: `npx skills update -g`.
 Para añadir un MCP al proyecto (queda en `.mcp.json`, con la versión fijada): `claude mcp add --scope project <nombre> -- npx -y <paquete>@<versión>`.
 Un MCP solo tuyo se añade con `--scope user`.
 
