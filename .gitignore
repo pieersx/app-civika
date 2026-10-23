@@ -40,6 +40,14 @@ supabase/.branches/
 .vscode/
 .playwright-mcp/
 
+# Claude Code y agentes: configuración personal y skills (se instalan por comandos, ver docs/guia-herramientas.md)
+.claude/settings.local.json
+.claude/worktrees/
+.claude/skills/
+.claude/commands/
+.agents/
+skills-lock.json
+
 # Sistema operativo
 .DS_Store
 Thumbs.db

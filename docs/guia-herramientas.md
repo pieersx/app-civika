@@ -24,33 +24,33 @@ no Claude Code.
 | Herramienta | Para qué en Cívika | Quién la usa más |
 |---|---|---|
 | **context7** (MCP) | Documentación vigente de KMP, Compose Multiplatform, Koin, supabase-kt, MapLibre, CameraX, Room y ML Kit | Todos |
-| `supabase-postgres-best-practices` (skill del proyecto) | Reglas de Supabase/Postgres para esquema, RLS, índices y RPC; se carga antes de tocar SQL | Pieers |
-| `supabase` (skill del proyecto) | CLI, Auth, Storage, Edge Functions y diagnóstico; su auditoría Snyk está en riesgo medio, revisar antes de aplicar | Pieers y Alex |
-| `brainstorming` + `writing-plans` (skills del proyecto) | Convertir un issue en un plan con pasos y pruebas | Todos |
-| `test-driven-development` (skill del proyecto) | Reglas de `shared/domain`, ViewModels y RPC | Todos |
-| `systematic-debugging` (skill del proyecto) | Cuando algo falla y no es obvio por qué | Todos |
-| `using-git-worktrees` (skill del proyecto) | Trabajar en dos ramas a la vez sin mezclar archivos | Pieers |
+| `supabase-postgres-best-practices` (skill) | Reglas de Supabase/Postgres para esquema, RLS, índices y RPC; se carga antes de tocar SQL | Pieers |
+| `supabase` (skill) | CLI, Auth, Storage, Edge Functions y diagnóstico; su auditoría Snyk está en riesgo medio, revisar antes de aplicar | Pieers y Alex |
+| `brainstorming` + `writing-plans` (skills) | Convertir un issue en un plan con pasos y pruebas | Todos |
+| `test-driven-development` (skill) | Reglas de `shared/domain`, ViewModels y RPC | Todos |
+| `systematic-debugging` (skill) | Cuando algo falla y no es obvio por qué | Todos |
+| `using-git-worktrees` (skill) | Trabajar en dos ramas a la vez sin mezclar archivos | Pieers |
 | `finishing-a-development-branch` + `verification-before-completion` | Cerrar una rama con tests y evidencia | Todos |
-| Agente `revisor-codigo` y `/code-review` | Revisión con contexto limpio antes del commit y en el PR | Todos; Pieers revisa los PRs ajenos; su PR lo revisa otro colaborador o aplica la excepción del tech lead |
+| Agente `revisor-codigo` y `/code-review` (skill integrada) | Revisión con contexto limpio antes del commit y en el PR | Todos; Pieers revisa los PRs ajenos; su PR lo revisa otro colaborador o aplica la excepción del tech lead |
 | `/security-review` | RLS, funciones `security definer`, secretos | Pieers |
-| `mockup-ui` + `frontend-design` (skills del proyecto) | Mockup clicable, dirección visual y especificaciones para Compose | Emily |
+| `mockup-ui` (personal de Pieers) + `frontend-design` (plugin) | Mockup clicable, dirección visual y especificaciones para Compose | Emily |
 | Checklist de accesibilidad de `CLAUDE.md` | Contraste, TalkBack, foco y áreas táctiles antes de cerrar una pantalla | Emily y quien haga UI |
 | `dataviz` | Gráficos de los indicadores del panel | Alex |
 | Playwright MCP y Chrome DevTools MCP (`.mcp.json`) | Probar el panel web: flujos E2E, Lighthouse y accesibilidad | Alex |
 | `archify` (instalar aparte) | Diagramas de arquitectura, secuencia y estados para el informe; `npx skills add tt-a1i/archify -y` | Todos |
 | `docx` / `pptx` | Informe final (Entregable 3) y diapositivas; se usan desde la cuenta de cada uno y **no se copian al repo** por su licencia | Todos |
-| `documentation-writer` (skill del proyecto) | Documentación técnica con estructura Diátaxis | Todos |
-| `commit` y `mejorar-skill` (skills del proyecto) | Commits guiados y mejora de skills | Pieers |
+| `documentation-writer` (skill) | Documentación técnica con estructura Diátaxis | Todos |
+| `commit` y `mejorar-skill` (personales de Pieers, fuera del repo) | Commits guiados y mejora de skills | Pieers |
 | `entorno-windows` | Instalar Android Studio, Docker Desktop y la Supabase CLI en Windows | Todos, si está disponible |
-| `explicar` (skill del proyecto) | Entender un error o un archivo paso a paso | Quien esté aprendiendo |
+| `explicar` (personal de Pieers, fuera del repo) | Entender un error o un archivo paso a paso | Quien esté aprendiendo |
 
 **De dónde sale cada una:**
 - **Integradas en Claude Code** (no hay que instalar nada): `dataviz`, `/security-review`, `/simplify` y el MCP de
   Claude in Chrome.
-- **Skills del proyecto** (en `.agents/skills` y `.claude/skills`): `brainstorming`, `commit`,
-  `documentation-writer`, `explicar`, `find-skills`, `finishing-a-development-branch`, `frontend-design`,
-  `mejorar-skill`, `mockup-ui`, `supabase`, `supabase-postgres-best-practices`, `systematic-debugging`,
-  `test-driven-development`, `using-git-worktrees`, `verification-before-completion` y `writing-plans`.
+- **Skills de terceros**: ya **no se copian al repo**; cada integrante las instala en su equipo (ver «Instalar» abajo).
+  Son `brainstorming`, `writing-plans`, `test-driven-development`, `systematic-debugging`, `using-git-worktrees`,
+  `finishing-a-development-branch`, `verification-before-completion` (plugin `superpowers`), `frontend-design`
+  (plugin), `supabase` y `supabase-postgres-best-practices` (`supabase/agent-skills`).
 - **Documentos**: `docx` y `pptx` se usan desde la cuenta de cada uno; su licencia no permite copiarlos al repo.
 - **Opcionales**: `archify` (diagramas) se instala con `npx skills add tt-a1i/archify -y`; los plugins `design` y
   `excalidraw` se instalan con `/plugin`. El flujo actual no depende de ellos.
@@ -58,23 +58,31 @@ no Claude Code.
   la primera vez que abras el proyecto; `context7` además necesita iniciar sesión con `/mcp`. Las versiones de
   `playwright` y `chrome-devtools` están **fijadas** (nada de `@latest`): así nadie ejecuta en su PC una versión nueva
   sin revisar. Para subirlas, se revisa el changelog del paquete y se cambia la versión en `.mcp.json` en un PR.
-- **Personales de Pieers**: el agente `revisor-codigo` ya está versionado en `.claude/agents/`; la skill
-  `entorno-windows` no está en este repo y se comparte aparte.
+- **Personales de Pieers**: el agente `revisor-codigo` sí está versionado en `.claude/agents/`. Las skills `commit`,
+  `explicar`, `mejorar-skill`, `mockup-ui` y `entorno-windows` viven en su equipo (`~/.agents/skills`) y **no** están
+  en este repo; se comparten aparte si hacen falta.
 
-Las skills instaladas con `npx` se actualizan con `npx skills update`; después sincroniza la copia de Claude Code:
+### Instalar (por comandos, en tu equipo)
+
+Las instalaciones son por usuario: nada de esto se sube al repo. Dentro de Claude Code:
+
+```text
+/plugin install superpowers@anthropic-plugin-directory
+/plugin install frontend-design@anthropic-plugin-directory
+```
+
+En la terminal, para las skills de Supabase (`-g` = para tu usuario, no para el proyecto):
 
 ```bash
-cp -a .agents/skills/. .claude/skills/
+npx skills add supabase/agent-skills -g -a claude-code -s supabase -s supabase-postgres-best-practices -y
 ```
 
-En Windows PowerShell:
+Para ver qué hay antes de instalar: `npx skills add <repositorio> --list`. Para actualizar: `npx skills update -g`.
+Para añadir un MCP al proyecto (queda en `.mcp.json`, con la versión fijada): `claude mcp add --scope project <nombre> -- npx -y <paquete>@<versión>`.
+Un MCP solo tuyo se añade con `--scope user`.
 
-```powershell
-Copy-Item .agents\skills\* .claude\skills -Recurse -Force
-```
-
-`skills-lock.json` fija las versiones. Las skills de terceros no se editan a mano; las personales se mantienen en
-`.agents/skills` y se copian a `.claude/skills`.
+Nunca se suben al repo: `.claude/settings.local.json`, `.claude/worktrees/`, `.claude/skills/`, `.claude/commands/`,
+`.agents/` ni `skills-lock.json` (están en `.gitignore`). Sí se suben: `CLAUDE.md`, `.claude/agents/` y `.mcp.json`.
 
 En Android no hay MCP para controlar el emulador. Las pantallas se verifican con Compose UI Test, y las capturas se
 sacan con `adb exec-out screencap -p > captura.png`.
