@@ -61,7 +61,7 @@ sdk.dir=C:/Users/TU_USUARIO/AppData/Local/Android/Sdk
 
 - [Entregables 1 y 2](docs/entregables-1-y-2.md): problema, ODS, antecedentes, requisitos y arquitectura.
 - [Arquitectura](docs/arquitectura.md): contexto, modelo de datos, estados, permisos y decisiones técnicas (ADR).
-- [Diagramas](docs/diagramas/README.md): sistema, CI/CD, arquitectura hexagonal, clases del dominio y flujo de un reporte, con íconos (draw.io).
+- [Diagramas](docs/diagramas/README.md): sistema, CI/CD, arquitectura hexagonal, clases del dominio, flujo de un reporte y reglas de duplicados y prioridad, con íconos (draw.io).
 - [Dirección visual](docs/diseno/direccion-visual.md): paleta, tipografía y tokens de diseño.
 - [Plan de desarrollo](docs/plan-desarrollo.md): roles, sprints y flujo de trabajo del equipo.
 - [Primeros pasos](docs/primeros-pasos.md): qué hace cada integrante en la semana 1 del Sprint 1.
