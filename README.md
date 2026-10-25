@@ -64,6 +64,7 @@ sdk.dir=C:/Users/TU_USUARIO/AppData/Local/Android/Sdk
 - [Diagramas](docs/diagramas/README.md): sistema, CI/CD, arquitectura hexagonal, clases del dominio y flujo de un reporte, con íconos (draw.io).
 - [Dirección visual](docs/diseno/direccion-visual.md): paleta, tipografía y tokens de diseño.
 - [Plan de desarrollo](docs/plan-desarrollo.md): roles, sprints y flujo de trabajo del equipo.
+- [Primeros pasos](docs/primeros-pasos.md): qué hace cada integrante en la semana 1 del Sprint 1.
 - [Riesgos](docs/riesgos.md): qué puede salir mal al desarrollar, operar y desplegar, y cómo lo evitamos.
 - [Despliegue](docs/despliegue.md): checklist del entorno demo (Supabase, Firebase, Vercel, APK) y procedimientos de cuentas.
 - [Guía de herramientas](docs/guia-herramientas.md): qué skills, plugins y MCP de Claude Code usar en el proyecto.
