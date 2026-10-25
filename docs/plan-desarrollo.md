@@ -76,6 +76,8 @@ la app y en el panel, y cuando el backend esté listo solo cambia la implementac
 
 ### Sprint 1 — Base (semanas 1 y 2)
 
+Pasos concretos de la semana 1 por persona: [primeros-pasos.md](primeros-pasos.md).
+
 | Integrante | Tareas |
 |---|---|
 | Pieers | Proyecto KMP (`shared` con dominio y repos fake, `androidApp` y `webPanel` arrancando), Koin y `libs.versions.toml` revisado con context7; migraciones de Supabase con RLS; seed de las zonas del piloto y las categorías; CI (tests de `shared`, lint de Android, build de Wasm) y keep-alive |
