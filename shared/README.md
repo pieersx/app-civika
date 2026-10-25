@@ -1,6 +1,6 @@
 # shared/
 
-Código Kotlin común a la app Android y al panel web (Kotlin Multiplatform). Se crea en el **Sprint 1**.
+Código Kotlin común a la app Android y al panel web (Kotlin Multiplatform).
 
 - `commonMain/domain`: reglas de negocio puras, sin Android ni navegador: estados y transiciones permitidas, fórmula
   de prioridad, plazo vencido, validaciones y traducción de etiquetas de ML Kit a categorías.

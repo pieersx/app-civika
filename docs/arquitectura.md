@@ -417,7 +417,7 @@ nunca usa la app.
 
 **MFA:** los moderadores y el personal de entidad deben tener doble factor (TOTP). Se exige de dos formas:
 - Una política **restrictiva** en las tablas que usan, con la condición
-  `rol_actual() = 'ciudadano' or auth.jwt()->>'aal' = 'aal2'`, para que no deje fuera a los ciudadanos.
+  `private.rol_actual() = 'ciudadano' or auth.jwt()->>'aal' = 'aal2'`, para que no deje fuera a los ciudadanos.
 - Una comprobación de `aal2` **dentro** de `cambiar_estado` y de las RPC de moderación, porque una función
   `security definer` no pasa por el RLS.
 
@@ -470,7 +470,7 @@ cambia nada de B.
   tabla falsa por el `search_path`.
 - Después de crearlas se hace `revoke execute … from public, anon` y se da `grant execute` solo a `authenticated`, o
   también a `anon` en las de lectura pública. Por defecto, PostgreSQL deja ejecutar cualquier función a todo el mundo.
-- `rol_actual()` también es `security definer` y `stable`: lee `usuarios.rol` sin pasar por RLS, lo que evita la
+- `private.rol_actual()` también es `security definer` y `stable`: lee `usuarios.rol` sin pasar por RLS, lo que evita la
   recursión infinita de una política de `usuarios` que se consulta a sí misma.
 - El rol **siempre** sale de la tabla `usuarios`, nunca de `user_metadata` del token, porque ese campo lo puede editar
   el propio usuario.
@@ -574,8 +574,9 @@ que el personal de la entidad A cambie un incidente de B es el RLS, y eso lo pru
   indicador se muestra como «menos de 5», para que no se pueda inferir quién reportó.
 - **Fechas:** se guardan en UTC (`timestamptz`) y los cálculos de «días abierto», plazos e indicadores se hacen en
   `America/Lima`. Si no, un reporte de las 9 p. m. cuenta como del día siguiente.
-- **Compatibilidad de versiones:** las RPC que usa la app se versionan (`crear_reporte_v1`). Un APK viejo instalado
-  en un celular sigue funcionando cuando el esquema cambia, y la versión anterior se retira solo cuando nadie la usa.
+- **Compatibilidad de versiones:** las RPC que usa la app deben versionarse (`crear_reporte_v1`). Un APK viejo
+  instalado en un celular sigue funcionando cuando el esquema cambia, y la versión anterior se retira solo cuando
+  nadie la usa. Hoy `crear_reporte` aún no tiene sufijo (pendiente).
 - **Permisos de Android:** cámara y ubicación se piden en el momento de usarlas, no al abrir la app. Las
   notificaciones (Android 13+) se piden después del primer reporte, explicando para qué sirven. Las fotos de la
   galería se eligen con el **Photo Picker**, que no necesita permiso de almacenamiento.
