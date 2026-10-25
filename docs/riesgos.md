@@ -37,7 +37,7 @@ Responsables: **P** Pieers · **E** Emily · **V** Valeria · **K** Keyla · **A
 | Fuga entre entidades | La entidad A ve o cambia incidentes de B | RLS por `entidad_id` y pgTAP con entidades A y B (arquitectura §7.3) | P | 2 |
 | Vista que salta el RLS | Una vista expone datos que la tabla protege | Lectura pública por RPC con columnas seguras; vistas internas con `security_invoker = true` | P | 1 |
 | RPC `security definer` insegura | Escalada de privilegios | `search_path = ''`, `revoke execute` y validar rol y entidad dentro de la función | P | 1 |
-| Rol desde el token | Un usuario se pone «moderador» en `user_metadata` | El rol sale siempre de `usuarios` con `rol_actual()` | P | 1 |
+| Rol desde el token | Un usuario se pone «moderador» en `user_metadata` | El rol sale siempre de `usuarios` con `private.rol_actual()` | P | 1 |
 | Autoasignarse un rol | Alguien edita su fila y se vuelve moderador | Trigger que bloquea `rol`, `entidad_id` y `activo` salvo para `service_role` y `postgres` | P | 1 |
 | Borrar una cuenta borra sus reportes | Desaparecen incidentes e indicadores al eliminar una cuenta | `usuarios` queda como lápida anónima, sin clave foránea en cascada hacia `auth.users` (arquitectura §7.2) | P | 3 |
 | Sin auditoría | No se sabe quién rechazó, ocultó o cambió un rol | Tabla `auditoria` solo de inserción (arquitectura §6) | P | 2 |

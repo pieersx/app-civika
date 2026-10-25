@@ -1,6 +1,6 @@
 # androidApp/
 
-App Android del ciudadano, en Kotlin con Jetpack Compose. Se crea en el **Sprint 1** junto con el proyecto KMP.
+App Android del ciudadano, en Kotlin con Jetpack Compose.
 
 - Usa el dominio y los repositorios de `shared/`. Aquí solo van las pantallas, los ViewModels y lo que depende del
   dispositivo: Room, CameraX, MapLibre, WorkManager, FCM y ML Kit.

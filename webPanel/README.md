@@ -1,7 +1,7 @@
 # webPanel/
 
 Panel web de la entidad y la moderación (RF-13, RF-14 y RF-16), hecho con **Compose Multiplatform para web**
-(Kotlin/Wasm, en Beta). Se crea en el **Sprint 1**.
+(Kotlin/Wasm, en Beta).
 
 - Reutiliza el dominio, los repositorios y supabase-kt de `shared/`. Aquí solo van las pantallas y los ViewModels.
 - Pantallas: lista de incidentes con cambio de estado y comentarios, indicadores por zona y cola de moderación

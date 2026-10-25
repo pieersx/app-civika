@@ -33,8 +33,10 @@ app-civika/
 
 ## Cómo ejecutar
 
-**Requisitos:** JDK 21 y Android SDK (viene con Android Studio). No hace falta instalar Gradle: el proyecto trae
-`gradlew`. Crea `local.properties` en la raíz con la ruta de tu SDK (este archivo no se sube):
+**Requisitos:** JDK 21 y Android SDK 37 (se instala desde *SDK Manager* en Android Studio). No hace falta instalar
+Gradle: el proyecto trae `gradlew`. En Android Studio, elige JDK 21 en *Settings → Build Tools → Gradle → Gradle JDK*
+(sirve el JBR que trae el programa). Docker y la Supabase CLI solo hacen falta cuando trabajes en `supabase/`.
+Crea `local.properties` en la raíz con la ruta de tu SDK (este archivo no se sube; Android Studio suele crearlo solo):
 
 ```properties
 sdk.dir=C:/Users/TU_USUARIO/AppData/Local/Android/Sdk
