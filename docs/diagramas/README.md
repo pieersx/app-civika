@@ -1,9 +1,10 @@
 # Diagramas de Cívika
 
-Cinco diagramas, de lo general a lo concreto:
+Seis diagramas, de lo general a lo concreto:
 - Los dos primeros son **macro**: qué piezas hay y cómo se conectan.
 - El 3 y el 4 son **micro**: cómo está organizado el código por dentro.
 - El 5 es el **proceso**: qué pasa con un reporte, paso a paso.
+- El 6 son las **reglas de negocio**: cómo se detectan los duplicados y cómo se calcula la prioridad.
 
 El detalle de cada decisión está en [arquitectura.md](../arquitectura.md).
 
@@ -46,6 +47,15 @@ no muestra la subida de fotos a Storage, los errores (por ejemplo, fuera de la z
 > Para el informe del curso sigue vigente la [Figura 2 v2](../img/v2/flujo-reporte.svg), con el estilo formal de los
 > entregables. Este diagrama es la versión para el equipo: con íconos y editable.
 
+## 6. Duplicados y prioridad (reglas de negocio)
+
+Dos reglas que deciden qué ve la entidad primero. A la izquierda, cómo `buscar_duplicados` revisa si el problema ya
+fue reportado: misma categoría, dentro de un radio (vial 50 m, residuos 30 m, accesibilidad 25 m) y de una ventana de
+30 días. A la derecha, la fórmula de prioridad con dos ejemplos con números. Lo punteado (la pantalla «¿Es el mismo
+problema?» y `apoyar_incidente`) está planificado. Fuente: [arquitectura.md §6](../arquitectura.md#6-modelo-de-datos).
+
+![Duplicados y prioridad: flujo de buscar_duplicados y fórmula de prioridad con ejemplos](06-duplicados-prioridad.drawio.svg)
+
 ## Palabras que aparecen
 
 | Término | Qué significa aquí |
@@ -57,6 +67,8 @@ no muestra la subida de fotos a Storage, los errores (por ejemplo, fuera de la z
 | RLS | *Row Level Security*: reglas de PostgreSQL que deciden qué filas puede ver o cambiar cada usuario. |
 | Carril (*swimlane*) | Columna de un diagrama de flujo que agrupa los pasos que hace un mismo actor. |
 | Puerto / adaptador | El puerto es una interfaz (`IncidenteRepository`); el adaptador es una clase que la implementa (`FakeIncidenteRepository`). |
+| Prioridad | Número que ordena la lista de la entidad: mayor número, se atiende antes. |
+| Candidato a duplicado | Incidente abierto, de la misma categoría, cercano y reciente, que podría ser el mismo problema. |
 
 ## Cómo editarlos
 
@@ -73,7 +85,7 @@ Reglas:
 - Cuando cambie la arquitectura, actualiza primero [arquitectura.md](../arquitectura.md) y después el diagrama.
 - Respeta los colores por tipo: personas en naranja, apps en azul, código común en morado, Supabase en verde, datos en
   amarillo, servicios externos en rosa e infraestructura en gris.
-- En los diagramas 1 y 2, todo lo punteado (recuadros y flechas) está planificado; lo continuo ya existe.
+- En los diagramas 1, 2 y 6, todo lo punteado (recuadros y flechas) está planificado; lo continuo ya existe.
 - En los diagramas 3 y 4, un **recuadro** punteado está planificado. Las **flechas** siguen la convención UML: la
   punteada significa «usa / depende de» y la que termina en triángulo hueco, «implementa».
 - Los íconos de Supabase, Vercel y Firebase son formas simples que solo sirven para reconocer cada servicio.
