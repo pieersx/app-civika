@@ -2,7 +2,7 @@
 # Antes de cambiar una versión, revisa su documentación con context7 (ver docs/guia-herramientas.md).
 
 [versions]
-agp = "9.4.1"
+agp = "9.5.0"
 android-compileSdk = "37"
 android-minSdk = "26"
 android-targetSdk = "37"
