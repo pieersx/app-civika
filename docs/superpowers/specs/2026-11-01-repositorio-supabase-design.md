@@ -32,7 +32,7 @@ Petición que sigue el diagrama: el ciudadano abre la lista. El repositorio hace
 | El SQL cuenta días en hora de Lima | `private.calcular_prioridad` | usa `timezone('America/Lima', …)::date` y `+20` si pasa del plazo |
 | `lat` y `lon` nunca son nulos | esquema | `incidentes.geom` es `not null` |
 
-Sin comprobar: la forma real del JSON **con datos** (se resuelve en el paso 1 del plan con `demo.sql`), los motores de
+Sin comprobar: la forma real del JSON **con datos** (se resuelve en la Tarea 2 del plan con `demo.sql`), los motores de
 Ktor por plataforma (context7 no los documentó) y CORS en un navegador real, en Supabase Cloud y desde el panel Wasm.
 
 ## 3. Decisiones
@@ -60,7 +60,7 @@ Por defecto, aprobadas con la revisión (`/code-review` del 1 de noviembre):
    no romper las pruebas ni el `Fake` ni inventar un punto en 0.0 (las necesita el mapa, issue #4). **No** se añade
    `id`: ninguna pantalla lo usa todavía y se agrega cuando una tarea lo necesite (detalle o apoyo). El DTO usa
    `Double` no nulo porque la base garantiza la ubicación, e ignora los campos que no usa (la configuración de `Json`
-   se comprueba en el paso 3.0 del plan).
+   se comprueba en la Tarea 3, paso 1, del plan).
 7. **Estado:** el DTO lee `estado` como texto y lo convierte a mano (`reportado` → `REPORTADO`, `en_revision` →
    `EN_REVISION`, etc.). Un valor desconocido **omite esa fila con un aviso** (`println`, que aparece en Logcat y en la
    consola del navegador; un logger propio queda para después) y no tumba la lista. Hay una prueba que lo cubre, para
@@ -75,8 +75,12 @@ Por defecto, aprobadas con la revisión (`/code-review` del 1 de noviembre):
    piloto con una alarma medible: si la RPC devuelve **exactamente 200 filas**, se llegó al tope; el repositorio lo
    avisa con `println` y hay que arreglarlo ya con una migración (filtro de estados en la RPC), junto con las
    funciones versionadas pendientes.
-10. **Sin configuración, solo en debug:** el `Fake` se usa en debug y en pruebas. Un build de **release** de Android, o
-    el build de producción del panel, **falla** si faltan `supabase.url` o `anonKey`, para no publicar datos falsos.
+10. **Sin configuración, solo en debug:** el `Fake` se usa en debug y en pruebas. El build **release** de Android
+    (`assembleRelease` y `bundleRelease`) **falla** si faltan `supabase.url` o `anonKey`, para no publicar datos
+    falsos. En el panel, la falla es opcional (`-Pcivika.exigirSupabase=true`) y la activará el workflow de
+    despliegue (issue #14): el CI construye `wasmJsBrowserDistribution` sin claves y no puede exigirlas. **Límite
+    conocido:** hasta que exista ese workflow, un build manual de distribución del panel sin claves publica el `Fake`;
+    no se debe publicar a mano.
 
 ## 4. Diseño
 
@@ -84,7 +88,7 @@ Por defecto, aprobadas con la revisión (`/code-review` del 1 de noviembre):
   `kotlinx-serialization-json` `1.11.0`, con el plugin de serialización a la versión de Kotlin. Motores de Ktor:
   OkHttp en `androidMain`, **OkHttp también en `jvmMain`** (el target `jvm()` de `shared` corre `:shared:jvmTest` y el
   CI) y `ktor-client-js` en `wasmJsMain`. Las versiones existen en Maven Central; los motores por plataforma y la
-  configuración de `Json` se confirman con context7 en el paso 3.0 del plan, antes de tocar `libs.versions.toml`.
+  configuración de `Json` se confirman con context7 en la Tarea 3, paso 1, del plan, antes de tocar `libs.versions.toml`.
 - **Código nuevo en `shared/data`:** `SupabaseConfig`, `IncidentePublicoDto`, `CategoriaDto` y
   `SupabaseIncidenteRepository`.
 - **Koin:** `SharedModule` ofrece el repositorio real solo si hay `SupabaseConfig`; si no, el `Fake`. El CI sigue sin
@@ -93,27 +97,17 @@ Por defecto, aprobadas con la revisión (`/code-review` del 1 de noviembre):
 
 ## 5. Plan y pruebas
 
-Orden de la implementación (cada paso es un commit, en ramas cortas):
+El plan, con tareas, rutas y comandos, está en [2026-11-01-repositorio-supabase.md](../plans/2026-11-01-repositorio-supabase.md). Orden: Tarea 1 (PR #33 de dependabot), 2 (`demo.sql`), 3 (dependencias, con la consulta a context7), 4 (dominio y mapeo), 5 (repositorio y Koin), 6 (configuración en Android y el panel), 7 (prueba real contra Supabase local) y 8 (`apoyar_incidente`).
 
-1. **`supabase/demo.sql`:** incidentes de ejemplo para el piloto (varias categorías y estados, con un resuelto). Con
-   ellos se ve el JSON real y se fijan los DTO. Se añade también un rechazado, pero solo para comprobar que la RPC
-   **no lo devuelve**; no sirve para los DTO. No se toca `seed.sql`.
-2. **Pruebas en `commonTest`, antes del código:**
-   - mapeo `IncidentePublicoDto` + `CategoriaDto` → `Incidente` con JSON copiado de la respuesta real del paso 1;
-   - estado conocido y estado desconocido (se omite la fila con aviso; este JSON es inventado, porque la RPC real no
-     devuelve estados que la app no conoce);
-   - categoría desconocida (se omite el incidente con aviso y los demás pasan) y categoría inactiva (se incluye);
-   - tope: con exactamente 200 filas se emite el aviso de límite alcanzado;
-   - días de calendario en Lima: creado ayer a las 23:00 (Lima) y listado hoy a las 00:30 = 1 día; nunca negativo;
-   - Koin con y sin configuración: con ella resuelve el repositorio real; sin ella, el `Fake`.
-3. **Código:**
-   0. consultar context7 (motores de Ktor por plataforma, configuración de `Json` y versiones) y fijar los resultados
-      en `gradle/libs.versions.toml`;
-   1. `SupabaseConfig`, DTO, repositorio y Koin;
-   2. la configuración de cada app y la falla del build de release sin claves.
-4. **Prueba real** contra `supabase start` con el demo del paso 1.
-5. Las pruebas actuales (`PrioridadTest`, `TransicionesEstadoTest`, `ObtenerIncidentesPriorizadosTest`) pasan sin
-   cambios.
+Pruebas que fija esta spec (se escriben antes del código):
+
+- mapeo `IncidentePublicoDto` + `CategoriaDto` → `Incidente` con JSON copiado de la respuesta real del demo;
+- estado conocido y estado desconocido (se omite la fila con aviso; este JSON es inventado, porque la RPC real no devuelve estados que la app no conoce);
+- categoría desconocida (se omite el incidente con aviso y los demás pasan) y categoría inactiva (se incluye);
+- tope: con exactamente 200 filas se emite el aviso de límite alcanzado;
+- días de calendario en Lima: creado ayer a las 23:00 (Lima) y listado hoy a las 00:30 = 1 día; nunca negativo;
+- Koin con y sin configuración: con ella resuelve el repositorio real; sin ella, el `Fake`;
+- las pruebas actuales (`PrioridadTest`, `TransicionesEstadoTest`, `ObtenerIncidentesPriorizadosTest`) pasan sin cambios.
 
 ## 6. Fuera de alcance
 
@@ -123,4 +117,4 @@ en la RPC (ver decisión 9) y un `demo.sql` con apoyos, fotos o historial.
 ## 7. Preguntas abiertas
 
 - `?` ¿CORS en un navegador real, en Supabase Cloud y desde el panel Wasm? Se comprueba al conectar el panel.
-- `?` Forma real del JSON con datos (por ejemplo, el formato de `creado_en`): se resuelve en el paso 1 del plan.
+- `?` Forma real del JSON con datos (por ejemplo, el formato de `creado_en`): se resuelve en la Tarea 2 del plan.
