@@ -69,6 +69,37 @@ escrituras con reglas de negocio pasan por RPC `security definer`, no por `UPDAT
 
 La CI ejecuta el mismo comando en el job `Base de datos (pgTAP)`.
 
+## Datos de demo
+
+`demo.sql` carga 8 incidentes de ejemplo del piloto (`DEMO-001` a `DEMO-008`, con las 3 categorías y los 6 estados), 6
+usuarios demo (sin cuenta de acceso: se insertan en `public.usuarios`, no en `auth.users`), 20 apoyos reales y 3
+reportes con descripción. Sirve para ver la lista real en la app y en el panel. **No trae fotos ni historial de
+estados** (el detalle del incidente es del Sprint 3). No es parte del seed: hay que cargarlo a mano y **nunca en
+producción**.
+
+```bash
+# Git Bash (requiere `supabase start`)
+docker exec -i supabase_db_app-civika psql -U postgres -v ON_ERROR_STOP=1 < supabase/demo.sql
+```
+
+```powershell
+# PowerShell: no admite `<`, se envía el archivo por una tubería
+Get-Content supabase/demo.sql | docker exec -i supabase_db_app-civika psql -U postgres -v ON_ERROR_STOP=1
+```
+
+El nombre del contenedor es `supabase_db_` más el `project_id` de `supabase/config.toml` (hoy `app-civika`); si
+cambia, cambia también el comando.
+
+- Se puede volver a ejecutar sin duplicar filas. `supabase db reset` lo borra: vuelve a cargarlo después.
+- **Se niega a cargarse** si la base ya tiene incidentes que no son `DEMO-%`: protege una base con datos reales.
+- **Las pruebas pgTAP asumen una base sin incidentes** (cuentan filas absolutas). Con el demo cargado fallan varias
+  de `01_base.sql` y `02_mfa.sql`. Antes de `supabase test db`, ejecuta `supabase db reset`. El CI no se ve afectado:
+  arranca con una base limpia.
+- `apoyos_count` y `prioridad` los calculan los triggers desde `public.apoyos`; por eso el demo inserta apoyos reales y
+  no escribe esos campos. La RPC `listar_incidentes_publicos` devuelve 7 filas: el rechazado nunca aparece.
+- Para el proyecto demo de Supabase Cloud, el mismo archivo se ejecuta con `psql` y la cadena de conexión del proyecto
+  (no se guarda en el repo). Las instrucciones para borrar el demo están al inicio de `demo.sql`.
+
 ## Entorno demo
 
 El proyecto demo de Supabase se mantiene activo con `.github/workflows/keep-alive.yml` (ADR-14). El workflow hace una
