@@ -33,7 +33,7 @@ App de reporte de incidencias urbanas (UNMSM, Desarrollo de Sistemas Móviles 20
   Si no hay otro revisor disponible, el tech lead puede fusionar su PR con CI verde y `--ff-only`, dejando constancia
   en el PR; eso no cuenta como aprobación. La fusión es con `--ff-only` (ver `CONTRIBUTING.md`).
 - Commits `tipo: descripción` en español, de 60 caracteres como máximo, sin atribución.
-- Antes de cada commit, revisión con el agente `revisor-codigo`. En los PR que tocan `supabase/`, también `/security-review`.
+- Antes de cada commit, revisión con `/code-review` (integrado en Claude Code). En los PR que tocan `supabase/`, también `/security-review`.
 - No asignes reviewers ni assignees sin confirmar el roster del equipo.
 
 ## Comandos

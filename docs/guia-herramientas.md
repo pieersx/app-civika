@@ -16,7 +16,7 @@ no Claude Code.
 3. **Tests primero.** `test-driven-development`: primero la prueba que falla, después el código.
 4. **Nada se da por terminado sin evidencia.** `verification-before-completion`: hay que ejecutar las
    pruebas y mostrar la salida.
-5. **Revisión antes de cada commit.** Usa el agente `revisor-codigo`. En un PR que toque `supabase/`, ejecuta también
+5. **Revisión antes de cada commit.** Usa `/code-review`. En un PR que toque `supabase/`, ejecuta también
    `/security-review`.
 
 ## Qué usar
@@ -31,15 +31,14 @@ no Claude Code.
 | `systematic-debugging` (skill) | Cuando algo falla y no es obvio por qué | Todos |
 | `using-git-worktrees` (skill) | Trabajar en dos ramas a la vez sin mezclar archivos | Pieers |
 | `finishing-a-development-branch` + `verification-before-completion` | Cerrar una rama con tests y evidencia | Todos |
-| Agente `revisor-codigo` y `/code-review` (skill integrada) | Revisión con contexto limpio antes del commit y en el PR | Todos; Pieers revisa los PRs ajenos; su PR lo revisa otro colaborador o aplica la excepción del tech lead |
+| `/code-review` (integrado en Claude Code) | Revisión del diff antes del commit y en el PR | Todos; Pieers revisa los PRs ajenos; su PR lo revisa otro colaborador o aplica la excepción del tech lead |
 | `/security-review` | RLS, funciones `security definer`, secretos | Pieers |
 | `mockup-ui` (personal de Pieers) + `frontend-design` (plugin) | Mockup clicable, dirección visual y especificaciones para Compose | Emily |
 | Checklist de accesibilidad de `CLAUDE.md` | Contraste, TalkBack, foco y áreas táctiles antes de cerrar una pantalla | Emily y quien haga UI |
 | `dataviz` | Gráficos de los indicadores del panel | Alex |
 | Playwright MCP y Chrome DevTools MCP (`.mcp.json`) | Probar el panel web: flujos E2E, Lighthouse y accesibilidad | Alex |
-| `archify` (instalar aparte) | Diagramas de arquitectura, secuencia y estados para el informe; `npx skills add tt-a1i/archify -y` | Todos |
+| Extensión draw.io de VS Code | Diagramas de arquitectura, secuencia y estados para el informe; las reglas están en `docs/diagramas/README.md` | Todos |
 | `docx` / `pptx` | Informe final (Entregable 3) y diapositivas; se usan desde la cuenta de cada uno y **no se copian al repo** por su licencia | Todos |
-| `documentation-writer` (skill) | Documentación técnica con estructura Diátaxis | Todos |
 | `commit` y `mejorar-skill` (personales de Pieers, fuera del repo) | Commits guiados y mejora de skills | Pieers |
 | `entorno-windows` | Instalar Android Studio, Docker Desktop y la Supabase CLI en Windows | Todos, si está disponible |
 | `explicar` (personal de Pieers, fuera del repo) | Entender un error o un archivo paso a paso | Quien esté aprendiendo |
@@ -52,15 +51,14 @@ no Claude Code.
   `finishing-a-development-branch`, `verification-before-completion` (plugin `superpowers`), `frontend-design`
   (plugin), `supabase` y `supabase-postgres-best-practices` (`supabase/agent-skills`).
 - **Documentos**: `docx` y `pptx` se usan desde la cuenta de cada uno; su licencia no permite copiarlos al repo.
-- **Opcionales**: `archify` (diagramas) se instala con `npx skills add tt-a1i/archify -y`; los plugins `design` y
-  `excalidraw` se instalan con `/plugin`. El flujo actual no depende de ellos.
+- **Opcionales**: los plugins `design` y `excalidraw` se instalan con `/plugin`. El flujo actual no depende de ellos.
 - **MCP del proyecto** (en `.mcp.json`): `context7`, `playwright` y `chrome-devtools`. Claude Code pedirá aprobarlos
   la primera vez que abras el proyecto; `context7` además necesita iniciar sesión con `/mcp`. Las versiones de
   `playwright` y `chrome-devtools` están **fijadas** (nada de `@latest`): así nadie ejecuta en su PC una versión nueva
   sin revisar. Para subirlas, se revisa el changelog del paquete y se cambia la versión en `.mcp.json` en un PR.
-- **Personales de Pieers**: el agente `revisor-codigo` sí está versionado en `.claude/agents/`. Las skills `commit`,
-  `explicar`, `mejorar-skill`, `mockup-ui` y `entorno-windows` viven en su equipo (`~/.claude/skills`) y **no** están
-  en este repo; se comparten aparte si hacen falta.
+- **Personales de Pieers**: las skills `commit`, `explicar`, `mejorar-skill`, `mockup-ui` y `entorno-windows` viven en
+  su equipo (`~/.claude/skills`) y **no** están en este repo; se comparten aparte si hacen falta. El repo ya no trae
+  agentes: la revisión usa `/code-review`, que viene con Claude Code.
 
 ### Instalar (por comandos, en tu equipo)
 
@@ -82,7 +80,7 @@ Para añadir un MCP al proyecto (queda en `.mcp.json`, con la versión fijada): 
 Un MCP solo tuyo se añade con `--scope user`.
 
 Nunca se suben al repo: `.claude/settings.local.json`, `.claude/worktrees/`, `.claude/skills/`, `.claude/commands/`,
-`.agents/` ni `skills-lock.json` (están en `.gitignore`). Sí se suben: `CLAUDE.md`, `.claude/agents/` y `.mcp.json`.
+`.agents/` ni `skills-lock.json` (están en `.gitignore`). Sí se suben: `CLAUDE.md` y `.mcp.json`.
 
 En Android no hay MCP para controlar el emulador. Las pantallas se verifican con Compose UI Test, y las capturas se
 sacan con `adb exec-out screencap -p > captura.png`.
@@ -102,13 +100,13 @@ sacan con `adb exec-out screencap -p > captura.png`.
 **Pieers: esquema de Supabase (issue #1)**
 1. «Usa context7 para revisar la sintaxis de `geography` y `ST_DWithin` en PostGIS» → `writing-plans`.
 2. Escribe la prueba pgTAP de `buscar_duplicados` (que falle) → la migración → `supabase test db`.
-3. `revisor-codigo` → `/security-review` → commit → PR. Como el PR es tuyo, pide revisión a otro colaborador;
+3. `/code-review` → `/security-review` → commit → PR. Como el PR es tuyo, pide revisión a otro colaborador;
    tú revisas los PRs del equipo. Si no hay otro revisor, aplica la excepción del tech lead y deja constancia en el PR.
 
 **Emily: tema de Compose (issue #2)**
 1. `mockup-ui` sobre el mockup → tabla de tokens de `Color.kt` y `Type.kt`; `frontend-design` para la dirección visual.
 2. «Usa context7: ¿cómo se cargan fuentes con Compose Resources en KMP?».
-3. Pantalla de login → checklist de accesibilidad de `CLAUDE.md` → `revisor-codigo` → PR.
+3. Pantalla de login → checklist de accesibilidad de `CLAUDE.md` → `/code-review` → PR.
 
 **Valeria: cámara y cola sin conexión (issue #3)**
 1. «Usa context7 para CameraX con Compose y WorkManager con restricciones de red».
@@ -118,9 +116,9 @@ sacan con `adb exec-out screencap -p > captura.png`.
 **Keyla: mapa (issue #4)**
 1. «Usa context7 para MapLibre Native Android: cargar el estilo de OpenFreeMap y agrupar marcadores (clustering)».
 2. Marcadores con forma de señal desde el repositorio fake → prueba de UI.
-3. `revisor-codigo` → PR.
+3. `/code-review` → PR.
 
 **Alex: panel web (issue #5)**
 1. «Usa context7 para Compose Multiplatform wasmJs: configuración del módulo y navegación».
 2. Pantalla de incidentes con los datos fake de `shared` → prueba de humo con Playwright MCP.
-3. Indicadores con `dataviz` → `revisor-codigo` → PR.
+3. Indicadores con `dataviz` → `/code-review` → PR.
