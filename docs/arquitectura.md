@@ -369,6 +369,12 @@ mismos casos.
 Se recalcula con un trigger cada vez que hay un apoyo, y una vez al día con `pg_cron`. Los pesos están en
 `categorias`, así que se pueden ajustar sin tocar código (RNF-08).
 
+**Qué usa la app para ordenar (Sprint 2):** la lista ordena con la fórmula de `shared/domain` y **ignora** el campo
+`prioridad` que devuelve `listar_incidentes_publicos`. El valor guardado solo decide cuáles 200 filas devuelve la RPC
+(las de mayor prioridad); mientras no exista el recálculo diario con `pg_cron`, ese valor puede estar
+desactualizado. Los días abiertos son **días de calendario en America/Lima** (UTC−5, sin horario de verano), igual
+que en SQL, y nunca son negativos.
+
 **Tiempo promedio de atención (RF-14):** se calcula desde `historial_estados.creado_en` como la diferencia entre
 la primera entrada «Reportado» y la última «Resuelto» de cada incidente. Con ese mismo dato se calcula el
 **porcentaje atendido dentro del plazo**: los incidentes resueltos en `plazo_objetivo_dias` o menos, divididos entre
