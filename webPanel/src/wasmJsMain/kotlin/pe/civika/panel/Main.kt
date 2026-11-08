@@ -5,7 +5,7 @@ import androidx.compose.ui.window.ComposeViewport
 import kotlinx.browser.document
 import org.koin.core.context.startKoin
 import pe.civika.panel.di.panelModule
-import pe.civika.panel.feature.incidentes.PanelIncidentesScreen
+import pe.civika.panel.navegacion.PanelApp
 import pe.civika.panel.ui.PanelTheme
 import pe.civika.shared.di.sharedModule
 
@@ -16,7 +16,7 @@ fun main() {
     }
     ComposeViewport(document.body!!) {
         PanelTheme {
-            PanelIncidentesScreen()
+            PanelApp()
         }
     }
 }
