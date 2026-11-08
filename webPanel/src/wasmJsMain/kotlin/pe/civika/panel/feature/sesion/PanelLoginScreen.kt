@@ -32,7 +32,7 @@ import pe.civika.panel.ui.LogoCivika
 import pe.civika.panel.ui.TarjetaPanel
 
 /**
- * Ingreso al panel (RF-11): una sola tarjeta centrada con correo, contraseña y el botón
+ * Ingreso al panel (RF-13): una sola tarjeta centrada con correo, contraseña y el botón
  * «Ingresar». Debajo quedan las cuentas de ejemplo y el recordatorio de que Cívika no es un
  * canal de emergencias (105 / 116).
  */
