@@ -85,6 +85,9 @@ android {
             manifestPlaceholders["usesCleartextTraffic"] = "false"
             isMinifyEnabled = true
             isShrinkResources = true
+            // MapLibre trae su motor nativo para cada arquitectura (casi 30 MB de más). Los celulares reales son
+            // arm64 o armeabi-v7a; el emulador x86_64 usa el APK debug, que conserva todas.
+            ndk { abiFilters += setOf("arm64-v8a", "armeabi-v7a") }
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
             signingConfig = signingConfigs.findByName("release")
         }
