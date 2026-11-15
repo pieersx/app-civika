@@ -10,13 +10,13 @@ Proyecto del **Grupo 10** del curso *Desarrollo de Sistemas Móviles* (UNMSM, FI
 
 ## Stack
 
-Todo el cliente está en **Kotlin Multiplatform**.
+La app es **Kotlin Multiplatform**; el panel de la entidad es una aplicación web aparte.
 
 | Parte | Tecnología |
 |---|---|
 | Código común (`shared`) | Dominio y reglas de negocio, repositorios, supabase-kt sobre Ktor, Koin, kotlinx.serialization |
-| App móvil (`androidApp`) | Jetpack Compose (Material 3), MVVM (ViewModel + StateFlow), Room, WorkManager, CameraX, ubicación de Android, MapLibre con teselas de OpenFreeMap, ML Kit |
-| Panel web (`webPanel`) | Compose Multiplatform para web (Kotlin/Wasm) |
+| App móvil (`androidApp`) | Jetpack Compose (Material 3), MVVM (ViewModel + StateFlow), Room, WorkManager, CameraX, ubicación de Android, MapLibre con teselas de OpenFreeMap |
+| Panel web (`webPanel`) | React + Vite + TypeScript, Tailwind CSS, TanStack Query, supabase-js, MapLibre GL JS |
 | Backend | Supabase: PostgreSQL + PostGIS, Auth, Storage, Edge Functions |
 | Notificaciones | Firebase Cloud Messaging |
 
@@ -26,7 +26,7 @@ Todo el cliente está en **Kotlin Multiplatform**.
 app-civika/
 ├─ shared/      Kotlin común: dominio y datos
 ├─ androidApp/  App Android del ciudadano (Compose)
-├─ webPanel/    Panel web de la entidad (Compose Web, Wasm)
+├─ webPanel/    Panel web de la entidad y la moderación (React)
 ├─ supabase/    Migraciones SQL, datos semilla, pruebas pgTAP y edge functions
 └─ docs/        Arquitectura, diseño, plan, guía de herramientas y entregables
 ```
@@ -35,20 +35,33 @@ app-civika/
 
 **Requisitos:** JDK 21 y Android SDK 37 (se instala desde *SDK Manager* en Android Studio). No hace falta instalar
 Gradle: el proyecto trae `gradlew`. En Android Studio, elige JDK 21 en *Settings → Build Tools → Gradle → Gradle JDK*
-(sirve el JBR que trae el programa). Docker y la Supabase CLI solo hacen falta cuando trabajes en `supabase/`.
-Crea `local.properties` en la raíz con la ruta de tu SDK (este archivo no se sube; Android Studio suele crearlo solo):
+(sirve el JBR que trae el programa). Para el panel, Node 24. Docker y la Supabase CLI solo hacen falta cuando
+trabajes en `supabase/` o quieras probar contra un backend local.
+
+Copia `local.properties.example` a `local.properties` en la raíz y pon la ruta de tu SDK (este archivo no se sube;
+Android Studio suele crearlo solo):
 
 ```properties
 sdk.dir=C:/Users/TU_USUARIO/AppData/Local/Android/Sdk
+supabase.url=
+supabase.anonKey=
 ```
+
+Con `supabase.url` y `supabase.anonKey` vacíos, la app arranca en **modo demostración** con datos de ejemplo. Para
+conectarla, pon la URL y la clave **anon** (pública) de tu proyecto, o las de `supabase status` si usas Supabase
+local (desde el emulador, la URL es `http://10.0.2.2:54321`). El panel usa las mismas dos claves en
+`webPanel/.env.local` (plantilla: `webPanel/.env.example`). La lista completa de variables y secretos está en
+[docs/despliegue.md](docs/despliegue.md). La clave `service_role` no va en ninguno de estos archivos.
 
 | Qué | Comando |
 |---|---|
 | Pruebas rápidas del dominio | `./gradlew :shared:jvmTest` |
-| Todas las pruebas de `shared` (JVM y Wasm) | `./gradlew :shared:allTests` |
+| Todas las pruebas de `shared` | `./gradlew :shared:allTests` |
 | Lint y pruebas de la app | `./gradlew :androidApp:lint :androidApp:testDebugUnitTest` |
 | Instalar la app en un emulador o celular | `./gradlew :androidApp:installDebug` |
-| Panel web en el navegador | `./gradlew :webPanel:wasmJsBrowserDevelopmentRun` (la terminal muestra la URL, normalmente `http://localhost:8080`; tarda unos segundos en pintar). No recompila solo: tras un cambio, detén con Ctrl+C y vuelve a ejecutar. |
+| Panel web en el navegador | `cd webPanel`, `npm install` y `npm run dev` (la terminal muestra la URL) |
+| Pruebas del panel | `cd webPanel` y `npm run typecheck && npm run lint && npm test` |
+| Backend local | `supabase start` y `supabase test db` |
 
 **Ver la app en Android:**
 - **Emulador:** Android Studio → *Más acciones* → *Virtual Device Manager* → **+** → un Pixel con la imagen más
@@ -66,7 +79,7 @@ sdk.dir=C:/Users/TU_USUARIO/AppData/Local/Android/Sdk
 - [Plan de desarrollo](docs/plan-desarrollo.md): roles, sprints y flujo de trabajo del equipo.
 - [Primeros pasos](docs/primeros-pasos.md): qué hace cada integrante en la semana 1 del Sprint 1.
 - [Riesgos](docs/riesgos.md): qué puede salir mal al desarrollar, operar y desplegar, y cómo lo evitamos.
-- [Despliegue](docs/despliegue.md): checklist del entorno demo (Supabase, Firebase, Vercel, APK) y procedimientos de cuentas.
+- [Despliegue](docs/despliegue.md): variables de entorno, checklist de producción (Supabase, Firebase, Vercel, APK) y procedimientos de cuentas.
 - [Guía de herramientas](docs/guia-herramientas.md): qué skills, plugins y MCP de Claude Code usar en el proyecto.
 - [Cómo contribuir](CONTRIBUTING.md): ramas, commits y pull requests.
 

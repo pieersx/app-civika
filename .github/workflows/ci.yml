@@ -15,7 +15,6 @@ on:
       - "gradle.properties"
       - "gradlew"
       - "gradlew.bat"
-      - "kotlin-js-store/**"
       - "supabase/**"
       - ".github/workflows/**"
   push:
@@ -29,7 +28,6 @@ on:
       - "gradle.properties"
       - "gradlew"
       - "gradlew.bat"
-      - "kotlin-js-store/**"
       - "supabase/**"
       - ".github/workflows/**"
 
@@ -41,8 +39,8 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  build:
-    name: Pruebas y build
+  android:
+    name: App Android y shared
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
@@ -55,23 +53,49 @@ jobs:
 
       - uses: gradle/actions/setup-gradle@v6
 
-      - name: Pruebas de shared (JVM y Wasm)
+      # Sin claves de Supabase ni google-services.json: la app compila en modo demostración.
+      - name: Pruebas de shared
         run: ./gradlew :shared:allTests --console=plain
 
       - name: Lint, pruebas y APK de Android
         run: ./gradlew :androidApp:lint :androidApp:testDebugUnitTest :androidApp:assembleDebug --console=plain
 
-      - name: Pruebas y build del panel web (Wasm)
-        run: ./gradlew :webPanel:wasmJsBrowserTest :webPanel:wasmJsBrowserDistribution --console=plain
-
       - name: Guardar reportes si algo falla
         if: failure()
         uses: actions/upload-artifact@v7
         with:
-          name: reportes
+          name: reportes-android
           path: |
             **/build/reports/
             **/build/test-results/
+
+  panel:
+    name: Panel web
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: webPanel
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: webPanel/package-lock.json
+
+      - run: npm ci
+
+      - name: Tipos, lint y pruebas
+        run: |
+          npm run typecheck
+          npm run lint
+          npm test
+
+      # El build no necesita claves: sin ellas el panel muestra «Falta configurar».
+      - name: Build de producción
+        run: npm run build
 
   supabase:
     name: Base de datos (pgTAP)

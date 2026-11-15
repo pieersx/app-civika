@@ -8,6 +8,17 @@ updates:
     open-pull-requests-limit: 5
     commit-message:
       prefix: "chore"
+  # Dependencias del panel web (webPanel/package.json)
+  - package-ecosystem: "npm"
+    directory: "/webPanel"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 5
+    groups:
+      panel-menores:
+        update-types: ["minor", "patch"]
+    commit-message:
+      prefix: "chore"
   # Acciones usadas en .github/workflows
   - package-ecosystem: "github-actions"
     directory: "/"
