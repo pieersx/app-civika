@@ -57,6 +57,8 @@ Convertir un archivo a base64 para un secreto de GitHub:
 - [ ] **Auth → Providers → Email:** confirmación de correo activada.
 - [ ] **Auth → Attack Protection:** captcha (Turnstile o hCaptcha) en el registro. Ojo: al activarlo, la app y el
   panel tienen que enviar el token del captcha; hasta integrarlo, déjalo desactivado y apóyate en los límites de Auth.
+- [ ] **Auth → Sign In / Providers → Email:** longitud mínima de contraseña en **8** (como exige la app; `config.toml`
+  solo vale en local, en la nube se cambia aquí).
 - [ ] **Auth → MFA:** TOTP activado. Sin él, moderación y entidad no pueden entrar al panel.
 - [ ] **SMTP propio** (un proveedor con plan gratuito): el correo integrado de Supabase tiene límites muy bajos y
   suele caer en spam.
