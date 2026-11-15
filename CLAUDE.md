@@ -44,6 +44,6 @@ App de reporte de incidencias urbanas (UNMSM, Desarrollo de Sistemas Móviles 20
 - Tests rápidos del dominio: `./gradlew :shared:jvmTest`. Todos: `./gradlew :shared:allTests`
 - Versiones: `gradle/libs.versions.toml` (Kotlin, Compose Multiplatform, AGP 9 con el plugin Android-KMP, Koin)
 - App: `./gradlew :androidApp:lint :androidApp:testDebugUnitTest`
-- Panel (dentro de `webPanel/`): `npm run dev`, y antes de un PR `npm run typecheck && npm run lint && npm test && npm run build`
+- Panel (dentro de `webPanel/`): `pnpm dev`, y antes de un PR `pnpm typecheck && pnpm lint && pnpm test && pnpm build`
 - Base de datos: `supabase start` y `supabase test db` (con una base sin `demo.sql`: tras `supabase db reset`)
 - Variables de entorno y despliegue: `docs/despliegue.md`

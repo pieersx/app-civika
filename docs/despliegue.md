@@ -86,7 +86,7 @@ Convertir un archivo a base64 para un secreto de GitHub:
 ## 3. Panel web en Vercel (ADR-18)
 
 - [ ] *Add New → Project*, importar el repo y poner **Root Directory** `webPanel`. Vercel detecta Vite
-  (`npm run build`, salida `dist`).
+  (`pnpm build`, salida `dist`).
 - [ ] En *Settings → Environment Variables*, definir `VITE_SUPABASE_URL` y `VITE_SUPABASE_ANON_KEY` para
   *Production* y *Preview*. Un cambio de variables necesita un *Redeploy*.
 - [ ] Añadir la URL final a *Site URL* y *Redirect URLs* de Supabase (§1).

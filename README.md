@@ -35,7 +35,7 @@ app-civika/
 
 **Requisitos:** JDK 21 y Android SDK 37 (se instala desde *SDK Manager* en Android Studio). No hace falta instalar
 Gradle: el proyecto trae `gradlew`. En Android Studio, elige JDK 21 en *Settings → Build Tools → Gradle → Gradle JDK*
-(sirve el JBR que trae el programa). Para el panel, Node 24. Docker y la Supabase CLI solo hacen falta cuando
+(sirve el JBR que trae el programa). Para el panel, Node 24 y pnpm 12 (`mise install` instala las dos herramientas con las versiones del proyecto). Docker y la Supabase CLI solo hacen falta cuando
 trabajes en `supabase/` o quieras probar contra un backend local.
 
 Copia `local.properties.example` a `local.properties` en la raíz y pon la ruta de tu SDK (este archivo no se sube;
@@ -59,8 +59,8 @@ local (desde el emulador, la URL es `http://10.0.2.2:54321`). El panel usa las m
 | Todas las pruebas de `shared` | `./gradlew :shared:allTests` |
 | Lint y pruebas de la app | `./gradlew :androidApp:lint :androidApp:testDebugUnitTest` |
 | Instalar la app en un emulador o celular | `./gradlew :androidApp:installDebug` |
-| Panel web en el navegador | `cd webPanel`, `npm install` y `npm run dev` (la terminal muestra la URL) |
-| Pruebas del panel | `cd webPanel` y `npm run typecheck && npm run lint && npm test` |
+| Panel web en el navegador | `cd webPanel`, `pnpm install` y `pnpm dev` (la terminal muestra la URL) |
+| Pruebas del panel | `cd webPanel` y `pnpm typecheck && pnpm lint && pnpm test` |
 | Backend local | `supabase start` y `supabase test db` |
 
 **Ver la app en Android:**

@@ -79,23 +79,28 @@ jobs:
     steps:
       - uses: actions/checkout@v7
 
+      # La versión de pnpm sale del campo `packageManager` de webPanel/package.json.
+      - uses: pnpm/action-setup@v6
+        with:
+          package_json_file: webPanel/package.json
+
       - uses: actions/setup-node@v6
         with:
           node-version: 24
-          cache: npm
-          cache-dependency-path: webPanel/package-lock.json
+          cache: pnpm
+          cache-dependency-path: webPanel/pnpm-lock.yaml
 
-      - run: npm ci
+      - run: pnpm install --frozen-lockfile
 
       - name: Tipos, lint y pruebas
         run: |
-          npm run typecheck
-          npm run lint
-          npm test
+          pnpm run typecheck
+          pnpm run lint
+          pnpm test
 
       # El build no necesita claves: sin ellas el panel muestra «Falta configurar».
       - name: Build de producción
-        run: npm run build
+        run: pnpm run build
 
   supabase:
     name: Base de datos (pgTAP)

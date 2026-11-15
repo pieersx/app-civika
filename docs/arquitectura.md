@@ -765,7 +765,7 @@ reemplace; no se borra la anterior.
 ### ADR-18. Panel desplegado en Vercel con su build nativo
 - **Contexto:** con el ADR-17 el panel es un proyecto de Node que Vercel sabe compilar.
 - **Decisión:** el proyecto de Vercel se conecta al repo con *Root Directory* `webPanel`; Vercel compila
-  (`npm run build`) y publica `dist` en cada push: `main` a producción y cada PR a una vista previa. Las variables
+  (`pnpm build`) y publica `dist` en cada push: `main` a producción y cada PR a una vista previa. Las variables
   `VITE_SUPABASE_URL` y `VITE_SUPABASE_ANON_KEY` se definen en el proyecto de Vercel. Reemplaza al ADR-16.
 - **Consecuencias:** ya no hacen falta `VERCEL_TOKEN` ni un workflow de despliegue. Las URLs de producción y de
   vista previa siguen teniendo que estar en las *Redirect URLs* de Supabase Auth. Sigue valiendo la nota del plan

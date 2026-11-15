@@ -26,21 +26,21 @@ Requiere Node 22.12 o superior y un Supabase en marcha (`supabase start` en la r
 
 ```bash
 cd webPanel
-npm install
+pnpm install
 cp .env.example .env.local     # y completa los dos valores (ver abajo)
-npm run dev                    # http://localhost:5173
+pnpm dev                    # http://localhost:5173
 ```
 
 | Script | Para qué |
 |---|---|
-| `npm run dev` | Servidor de desarrollo |
-| `npm run build` | Comprueba tipos y genera `dist/` |
-| `npm run preview` | Sirve `dist/` con las mismas cabeceras de seguridad que Vercel (`vercel.json`) |
-| `npm test` | Pruebas de la lógica pura con Vitest |
-| `npm run lint` | ESLint |
-| `npm run typecheck` | `tsc` sin emitir |
+| `pnpm dev` | Servidor de desarrollo |
+| `pnpm build` | Comprueba tipos y genera `dist/` |
+| `pnpm preview` | Sirve `dist/` con las mismas cabeceras de seguridad que Vercel (`vercel.json`) |
+| `pnpm test` | Pruebas de la lógica pura con Vitest |
+| `pnpm lint` | ESLint |
+| `pnpm typecheck` | `tsc` sin emitir |
 
-Antes de un PR: `npm run typecheck && npm run lint && npm test && npm run build`.
+Antes de un PR: `pnpm typecheck && pnpm lint && pnpm test && pnpm build`.
 
 ## Variables de entorno
 
@@ -75,7 +75,7 @@ Es una SPA estática; `vercel.json` ya trae el rewrite a `index.html`, las cabec
 `Referrer-Policy`, `frame-ancestors 'none'`, HSTS) y la caché de `assets/`.
 
 1. Importa el repositorio en Vercel y fija **Root Directory** = `webPanel`.
-2. **Build Command** = `npm run build` y **Output Directory** = `dist` (Vercel los detecta con `vercel.json`).
+2. **Build Command** = `pnpm build` y **Output Directory** = `dist` (Vercel los detecta con `vercel.json`).
 3. En *Settings → Environment Variables* define `VITE_SUPABASE_URL` y `VITE_SUPABASE_ANON_KEY` (clave anon del proyecto
    real) y vuelve a desplegar: las variables `VITE_` se incrustan al compilar.
 4. En Supabase, *Authentication → URL Configuration*: pon la URL del panel en **Site URL** y añade a **Redirect URLs**
@@ -88,7 +88,7 @@ Es una SPA estática; `vercel.json` ya trae el rewrite a `index.html`, las cabec
 
 La CSP permite `https://*.supabase.co` (API, Storage y Realtime) y `https://tiles.openfreemap.org` (estilo, teselas,
 sprites y tipografías del mapa). Si usas un dominio propio para Supabase, añádelo a `connect-src` e `img-src`.
-`npm run preview` añade automáticamente el origen de Supabase local a la CSP cuando no es `*.supabase.co`.
+`pnpm preview` añade automáticamente el origen de Supabase local a la CSP cuando no es `*.supabase.co`.
 
 ## Estructura
 
