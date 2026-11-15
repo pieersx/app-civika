@@ -1,0 +1,304 @@
+@import 'tailwindcss';
+
+/*
+ * Tokens de docs/diseno/direccion-visual.md. Si algo cambia, se actualiza primero
+ * ese documento y después estas variables. Aquí no se inventan colores: los tonos
+ * suaves (fondos de selección, hover) son mezclas de un token con transparencia.
+ */
+:root {
+  color-scheme: light;
+
+  --terracota: #c4532d;
+  --sobre-terracota: #ffffff;
+  --terracota-texto: #a8431f;
+  --verde: #2f6b4f;
+  --sobre-verde: #ffffff;
+  --arena: #faf6f0;
+  --superficie: #ffffff;
+  --tinta: #1f1b16;
+  --tinta-suave: #5c534a;
+  --borde: #e4dcd0;
+  --borde-campo: #8c8278;
+  --error: #b83232;
+  --sobre-error: #ffffff;
+
+  /* Estados: relleno + ícono para la forma, y color de texto para la palabra. */
+  --abierto: #d64545;
+  --sobre-abierto: #ffffff;
+  --abierto-texto: #b83232;
+  --atencion: #e0a100;
+  --sobre-atencion: #1f1b16;
+  --atencion-texto: #8a6100;
+  --resuelto: #2e8b57;
+  --sobre-resuelto: #ffffff;
+  --resuelto-texto: #1f7044;
+  --rechazado: #6b6560;
+  --sobre-rechazado: #ffffff;
+  --rechazado-texto: #6b6560;
+  /* Contorno del marcador: tinta en claro; en oscuro, el color del fondo. */
+  --contorno-marcador: #1f1b16;
+
+  /* Gráficos de una sola serie. Los colores de estado nunca son una serie. */
+  --datos: #1e7a55;
+
+  --sombra-panel: 0 8px 32px rgb(31 27 22 / 0.18);
+}
+
+/* Tema oscuro: por preferencia del sistema, salvo que la persona elija el claro… */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    color-scheme: dark;
+
+    --terracota: #f0a07e;
+    --sobre-terracota: #3b1205;
+    --terracota-texto: #f0a07e;
+    --verde: #7fc8a0;
+    --sobre-verde: #0f2a1d;
+    --arena: #171310;
+    --superficie: #221c18;
+    --tinta: #ede6dc;
+    --tinta-suave: #b5ada4;
+    --borde: #4a3f37;
+    --borde-campo: #7f756b;
+    --error: #ff8a80;
+    --sobre-error: #3b0f0b;
+
+    --abierto: #ff8a80;
+    --sobre-abierto: #3b0f0b;
+    --abierto-texto: #ff8a80;
+    --atencion: #f2c14e;
+    --sobre-atencion: #2a1f00;
+    --atencion-texto: #f2c14e;
+    --resuelto: #6fd39a;
+    --sobre-resuelto: #0f2a1d;
+    --resuelto-texto: #6fd39a;
+    --rechazado: #b5ada4;
+    --sobre-rechazado: #171310;
+    --rechazado-texto: #b5ada4;
+    --contorno-marcador: #171310;
+
+    --datos: #3ba878;
+
+    --sombra-panel: 0 8px 32px rgb(0 0 0 / 0.5);
+  }
+}
+
+/* …o por elección explícita con el conmutador. */
+:root[data-theme='dark'] {
+  color-scheme: dark;
+
+  --terracota: #f0a07e;
+  --sobre-terracota: #3b1205;
+  --terracota-texto: #f0a07e;
+  --verde: #7fc8a0;
+  --sobre-verde: #0f2a1d;
+  --arena: #171310;
+  --superficie: #221c18;
+  --tinta: #ede6dc;
+  --tinta-suave: #b5ada4;
+  --borde: #4a3f37;
+  --borde-campo: #7f756b;
+  --error: #ff8a80;
+  --sobre-error: #3b0f0b;
+
+  --abierto: #ff8a80;
+  --sobre-abierto: #3b0f0b;
+  --abierto-texto: #ff8a80;
+  --atencion: #f2c14e;
+  --sobre-atencion: #2a1f00;
+  --atencion-texto: #f2c14e;
+  --resuelto: #6fd39a;
+  --sobre-resuelto: #0f2a1d;
+  --resuelto-texto: #6fd39a;
+  --rechazado: #b5ada4;
+  --sobre-rechazado: #171310;
+  --rechazado-texto: #b5ada4;
+  --contorno-marcador: #171310;
+
+  --datos: #3ba878;
+
+  --sombra-panel: 0 8px 32px rgb(0 0 0 / 0.5);
+}
+
+@theme inline {
+  /* Solo existen los colores del documento de diseño. */
+  --color-*: initial;
+  --color-terracota: var(--terracota);
+  --color-sobre-terracota: var(--sobre-terracota);
+  --color-terracota-texto: var(--terracota-texto);
+  --color-verde: var(--verde);
+  --color-sobre-verde: var(--sobre-verde);
+  --color-arena: var(--arena);
+  --color-superficie: var(--superficie);
+  --color-tinta: var(--tinta);
+  --color-tinta-suave: var(--tinta-suave);
+  --color-borde: var(--borde);
+  --color-borde-campo: var(--borde-campo);
+  --color-error: var(--error);
+  --color-sobre-error: var(--sobre-error);
+  --color-abierto: var(--abierto);
+  --color-sobre-abierto: var(--sobre-abierto);
+  --color-abierto-texto: var(--abierto-texto);
+  --color-atencion: var(--atencion);
+  --color-sobre-atencion: var(--sobre-atencion);
+  --color-atencion-texto: var(--atencion-texto);
+  --color-resuelto: var(--resuelto);
+  --color-sobre-resuelto: var(--sobre-resuelto);
+  --color-resuelto-texto: var(--resuelto-texto);
+  --color-rechazado: var(--rechazado);
+  --color-sobre-rechazado: var(--sobre-rechazado);
+  --color-rechazado-texto: var(--rechazado-texto);
+  --color-datos: var(--datos);
+
+  --font-sans: 'Atkinson Hyperlegible Next', ui-sans-serif, system-ui, sans-serif;
+  --font-titulo: 'Bricolage Grotesque', 'Atkinson Hyperlegible Next', ui-sans-serif, system-ui, sans-serif;
+
+  /* Escala tipográfica del documento (sp = px). xs, sm y base ya coinciden: 12/16, 14/20 y 16/24. */
+  --text-titular: 1.375rem; /* titleLarge 22/28 */
+  --text-titular--line-height: 1.75rem;
+  --text-encabezado: 1.5rem; /* headlineSmall 24/32 */
+  --text-encabezado--line-height: 2rem;
+  --text-pagina: 1.75rem; /* headlineMedium 28/36 */
+  --text-pagina--line-height: 2.25rem;
+  --text-cifra: 2.25rem; /* displaySmall 36/44 */
+  --text-cifra--line-height: 2.75rem;
+
+  /* Radios: 8 en chips y campos, 12 en tarjetas, 28 en hojas. */
+  --radius-campo: 0.5rem;
+  --radius-tarjeta: 0.75rem;
+  --radius-hoja: 1.75rem;
+
+  --shadow-panel: var(--sombra-panel);
+
+  --animate-entrar: entrar 180ms ease-out;
+  --animate-deslizar: deslizar 220ms ease-out;
+  --animate-pulso: pulso 1.4s ease-in-out infinite;
+
+  @keyframes entrar {
+    from {
+      opacity: 0;
+      transform: translateY(6px);
+    }
+  }
+  @keyframes deslizar {
+    from {
+      transform: translateX(24px);
+      opacity: 0;
+    }
+  }
+  @keyframes pulso {
+    50% {
+      opacity: 0.45;
+    }
+  }
+}
+
+@layer base {
+  html {
+    font-family: var(--font-sans);
+    background: var(--arena);
+    color: var(--tinta);
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    min-height: 100dvh;
+    background: var(--arena);
+    font-size: 1rem;
+    line-height: 1.5rem;
+  }
+
+  h1,
+  h2,
+  h3 {
+    text-wrap: balance;
+  }
+
+  /* Foco siempre visible con teclado. */
+  :focus-visible {
+    outline: 2px solid var(--verde);
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+
+  button,
+  [role='button'],
+  a,
+  select,
+  summary {
+    cursor: pointer;
+  }
+
+  button:disabled {
+    cursor: not-allowed;
+  }
+
+  ::selection {
+    background: color-mix(in srgb, var(--verde) 30%, transparent);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    ::before,
+    ::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+@layer components {
+  /* Tonos suaves derivados de los tokens (selección, hover, fondos de aviso). */
+  .tinte-verde {
+    background: color-mix(in srgb, var(--verde) 12%, transparent);
+  }
+  .tinte-error {
+    background: color-mix(in srgb, var(--error) 10%, transparent);
+  }
+  .tinte-atencion {
+    background: color-mix(in srgb, var(--atencion) 18%, transparent);
+  }
+  .tinte-tinta {
+    background: color-mix(in srgb, var(--tinta) 6%, transparent);
+  }
+  .hover-tinta:hover {
+    background: color-mix(in srgb, var(--tinta) 6%, transparent);
+  }
+
+  .esqueleto {
+    border-radius: var(--radius-campo);
+    background: color-mix(in srgb, var(--tinta) 10%, transparent);
+    animation: var(--animate-pulso);
+  }
+}
+
+/* MapLibre: los controles heredan la tipografía y respetan el tema. */
+.maplibregl-map {
+  font-family: var(--font-sans);
+}
+.maplibregl-ctrl-attrib {
+  font-size: 0.75rem;
+  line-height: 1rem;
+}
+.marcador-incidente {
+  cursor: pointer;
+  background: none;
+  border: 0;
+  padding: 0;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+}
+.marcador-incidente:focus-visible {
+  outline: 3px solid #1f1b16;
+  outline-offset: 0;
+  border-radius: 50%;
+}
+
+/* Velo de los diálogos: tinta al 50 %. */
+dialog::backdrop {
+  background: rgb(31 27 22 / 0.5);
+}
