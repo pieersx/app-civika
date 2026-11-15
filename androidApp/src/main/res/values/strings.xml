@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Cívika</string>
+
+    <!-- Comunes -->
+    <string name="volver">Volver</string>
+    <string name="cargando">Cargando</string>
+    <string name="reintentar">Reintentar</string>
+    <string name="cancelar">Cancelar</string>
+    <string name="cerrar">Cerrar</string>
+    <string name="aceptar">Aceptar</string>
+    <string name="guardar">Guardar</string>
+    <string name="enviar">Enviar</string>
+    <string name="mostrar_contrasena">Mostrar contraseña</string>
+    <string name="ocultar_contrasena">Ocultar contraseña</string>
+    <string name="cd_estado">Estado: %1$s</string>
+    <string name="modo_demostracion">Modo demostración: datos de ejemplo</string>
+    <string name="modo_demostracion_detalle">Esta versión no está conectada a Supabase. Los datos son de ejemplo y se pierden al cerrar la app.</string>
+    <string name="sin_emergencias">Cívika no es un canal de emergencias. Si hay peligro, llama al 105 (Policía) o al 116 (Bomberos).</string>
+
+    <!-- Tarjeta de incidente -->
+    <string name="plazo_vencido">Plazo vencido</string>
+    <string name="dias_hoy">Hoy</string>
+    <plurals name="dias_abierto">
+        <item quantity="one">%d día abierto</item>
+        <item quantity="other">%d días abierto</item>
+    </plurals>
+    <plurals name="apoyos_n">
+        <item quantity="one">%d apoyo</item>
+        <item quantity="other">%d apoyos</item>
+    </plurals>
+    <string name="tarjeta_meta">%1$s · %2$s · %3$s</string>
+
+    <!-- Errores -->
+    <string name="error_sin_conexion">No hay conexión. Revisa tu internet e inténtalo de nuevo.</string>
+    <string name="error_sesion">Tu sesión venció. Inicia sesión de nuevo.</string>
+    <string name="error_fuera_de_zona">Ese punto está fuera de la zona piloto. Elige un lugar dentro de la Ciudad Universitaria o sus alrededores.</string>
+    <string name="error_generico">Algo salió mal. Inténtalo de nuevo en unos minutos.</string>
+    <string name="error_permiso">Tu cuenta no puede hacer esto.</string>
+    <string name="error_credenciales">El correo o la contraseña no coinciden. Revísalos e inténtalo otra vez.</string>
+    <string name="error_correo_sin_confirmar">Falta confirmar tu correo. Abre el enlace que te enviamos y vuelve a entrar.</string>
+    <string name="error_correo_registrado">Ese correo ya tiene una cuenta. Inicia sesión o recupera tu contraseña.</string>
+    <string name="error_contrasena_debil">La contraseña es muy fácil de adivinar. Usa una más larga o con otros caracteres.</string>
+    <string name="error_demasiados_intentos">Hiciste demasiados intentos. Espera unos minutos y vuelve a probar.</string>
+
+    <!-- Validación de campos -->
+    <string name="campo_obligatorio">Este campo es obligatorio.</string>
+    <string name="campo_muy_corto">Es muy corto.</string>
+    <string name="campo_muy_largo">Es muy largo.</string>
+    <string name="correo_invalido">Escribe un correo válido, por ejemplo nombre@correo.pe.</string>
+    <string name="contrasena_muy_corta">Usa al menos 8 caracteres.</string>
+    <string name="descripcion_muy_corta">Cuéntanos un poco más: al menos 10 caracteres.</string>
+    <string name="nombre_muy_corto">Escribe tu nombre.</string>
+
+    <!-- Navegación -->
+    <string name="nav_inicio">Inicio</string>
+    <string name="nav_mapa">Mapa</string>
+    <string name="nav_reportar">Reportar</string>
+    <string name="nav_mis_reportes">Mis reportes</string>
+    <string name="nav_perfil">Perfil</string>
+    <string name="cd_reportar_problema">Reportar un problema</string>
+
+    <!-- Notificaciones -->
+    <string name="canal_estado_nombre">Estado de tus reportes</string>
+    <string name="canal_estado_descripcion">Avisos cuando cambia el estado de un problema que reportaste o apoyaste.</string>
+</resources>

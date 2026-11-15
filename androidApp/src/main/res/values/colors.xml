@@ -2,4 +2,6 @@
 <resources>
     <!-- Arena, fondo de la marca (docs/diseno/direccion-visual.md) -->
     <color name="ic_launcher_background">#FAF6F0</color>
+    <!-- Fondo de la ventana y del splash: el mismo de la app, para que no haya un destello blanco. -->
+    <color name="fondo_ventana">#FAF6F0</color>
 </resources>

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="inicio_saludo">Hola, %1$s</string>
+    <string name="inicio_saludo_anonimo">Hola</string>
+    <string name="inicio_urgente">Lo más urgente</string>
+    <string name="inicio_vacio_titulo">Todo en orden por ahora</string>
+    <string name="inicio_vacio_texto">No hay problemas por atender. Si ves uno en la calle, repórtalo.</string>
+    <string name="reportar_problema">Reportar problema</string>
+    <string name="resumen_abiertos">abiertos</string>
+    <string name="resumen_en_atencion">en atención</string>
+    <string name="resumen_resueltos">resueltos en 30 días</string>
+    <string name="cd_notificaciones">Notificaciones</string>
+    <plurals name="cd_notificaciones_sin_leer">
+        <item quantity="one">Notificaciones, %d sin leer</item>
+        <item quantity="other">Notificaciones, %d sin leer</item>
+    </plurals>
+</resources>

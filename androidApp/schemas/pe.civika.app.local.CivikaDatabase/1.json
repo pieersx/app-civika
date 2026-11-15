@@ -1,0 +1,143 @@
+{
+  "formatVersion": 1,
+  "database": {
+    "version": 1,
+    "identityHash": "e5825b22f65bba1603b0adb85fbc9a76",
+    "entities": [
+      {
+        "tableName": "reportes_pendientes",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`clienteId` TEXT NOT NULL, `usuarioId` TEXT NOT NULL, `tipo` TEXT NOT NULL, `incidenteId` TEXT, `latitud` REAL NOT NULL, `longitud` REAL NOT NULL, `categoriaId` INTEGER NOT NULL, `categoriaNombre` TEXT NOT NULL, `descripcion` TEXT NOT NULL, `fotos` TEXT NOT NULL, `ubicacionSimulada` INTEGER NOT NULL, `direccion` TEXT, `estado` TEXT NOT NULL, `motivoError` TEXT, `detalleError` TEXT, `intentos` INTEGER NOT NULL, `creadoEnMs` INTEGER NOT NULL, `incidenteCreadoId` TEXT, `codigo` TEXT, `estadoIncidente` TEXT, `entidad` TEXT, PRIMARY KEY(`clienteId`))",
+        "fields": [
+          {
+            "fieldPath": "clienteId",
+            "columnName": "clienteId",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "usuarioId",
+            "columnName": "usuarioId",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "tipo",
+            "columnName": "tipo",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "incidenteId",
+            "columnName": "incidenteId",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "latitud",
+            "columnName": "latitud",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "longitud",
+            "columnName": "longitud",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "categoriaId",
+            "columnName": "categoriaId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "categoriaNombre",
+            "columnName": "categoriaNombre",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "descripcion",
+            "columnName": "descripcion",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "fotos",
+            "columnName": "fotos",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "ubicacionSimulada",
+            "columnName": "ubicacionSimulada",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "direccion",
+            "columnName": "direccion",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "estado",
+            "columnName": "estado",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "motivoError",
+            "columnName": "motivoError",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "detalleError",
+            "columnName": "detalleError",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "intentos",
+            "columnName": "intentos",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "creadoEnMs",
+            "columnName": "creadoEnMs",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "incidenteCreadoId",
+            "columnName": "incidenteCreadoId",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "codigo",
+            "columnName": "codigo",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "estadoIncidente",
+            "columnName": "estadoIncidente",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "entidad",
+            "columnName": "entidad",
+            "affinity": "TEXT"
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "clienteId"
+          ]
+        }
+      }
+    ],
+    "setupQueries": [
+      "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'e5825b22f65bba1603b0adb85fbc9a76')"
+    ]
+  }
+}

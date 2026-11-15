@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="detalle_titulo">Detalle</string>
+    <string name="detalle_no_encontrado_titulo">No encontramos este problema</string>
+    <string name="detalle_no_encontrado_texto">Puede que ya no esté disponible. Vuelve atrás y elige otro.</string>
+    <string name="detalle_motivo_rechazo">Este reporte fue rechazado. Motivo: %1$s</string>
+    <string name="detalle_es_tuyo">Reportaste este problema.</string>
+    <string name="detalle_apoyar">Apoyar</string>
+    <string name="detalle_ya_apoyas">Ya apoyas. Toca para retirar</string>
+    <string name="detalle_historial">Historial</string>
+    <string name="detalle_comentarios">Mensajes de la entidad</string>
+    <string name="detalle_foto_cd">Foto %1$d de %2$d del problema</string>
+    <string name="detalle_mapa_cd">Mapa con la ubicación aproximada del problema</string>
+    <string name="detalle_entidad">Entidad responsable: %1$s</string>
+    <string name="detalle_sin_entidad">Entidad responsable: aún sin asignar</string>
+    <plurals name="detalle_plazo">
+        <item quantity="one">Plazo objetivo: %1$d día. Queda %2$d.</item>
+        <item quantity="other">Plazo objetivo: %1$d días. Quedan %2$d.</item>
+    </plurals>
+    <plurals name="detalle_plazo_vencido">
+        <item quantity="one">Plazo vencido hace %d día.</item>
+        <item quantity="other">Plazo vencido hace %d días.</item>
+    </plurals>
+    <string name="compartir_codigo">Compartir código</string>
+    <string name="compartir_texto">Problema %1$s en Cívika: %2$s</string>
+    <string name="denunciar">Denunciar este reporte</string>
+    <string name="denunciar_titulo">Denunciar reporte</string>
+    <string name="denunciar_texto">Cuéntanos por qué: es falso, ofensivo o está repetido. Moderación lo revisará.</string>
+    <string name="denunciar_motivo">Motivo</string>
+    <string name="denunciar_enviar">Enviar denuncia</string>
+    <string name="verificar_titulo">¿Sigue arreglado?</string>
+    <string name="verificar_texto">Este problema se marcó como resuelto. Cuéntanos si lo ves bien o si sigue igual.</string>
+    <string name="verificar_si">Sí, sigue arreglado</string>
+    <string name="verificar_no">No, sigue igual</string>
+    <string name="verificar_tu_respuesta_si">Tu respuesta: sigue arreglado.</string>
+    <string name="verificar_tu_respuesta_no">Tu respuesta: sigue igual.</string>
+    <string name="aviso_apoyo_agregado">Ahora apoyas este problema.</string>
+    <string name="aviso_apoyo_retirado">Retiraste tu apoyo.</string>
+    <string name="aviso_verificacion">Gracias por avisar.</string>
+    <string name="aviso_reabierto">Gracias. Con tu aviso el problema se reabrió.</string>
+    <string name="aviso_denuncia">Recibimos tu denuncia. Gracias por avisar.</string>
+    <string name="aviso_denuncia_revision">Recibimos tu denuncia. El reporte pasó a revisión.</string>
+</resources>

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="perfil_sin_sesion_titulo">Aún no iniciaste sesión</string>
+    <string name="perfil_sin_sesion_texto">Puedes explorar el mapa sin cuenta. Para reportar o apoyar un problema necesitas una.</string>
+    <string name="perfil_editar_nombre">Editar nombre</string>
+    <string name="perfil_tema">Tema</string>
+    <string name="tema_sistema">Igual que el teléfono</string>
+    <string name="tema_claro">Claro</string>
+    <string name="tema_oscuro">Oscuro</string>
+    <string name="perfil_politica">Política de privacidad</string>
+    <string name="perfil_cerrar_sesion">Cerrar sesión</string>
+    <string name="perfil_cerrar_titulo">¿Cerrar sesión?</string>
+    <string name="perfil_cerrar_texto">Dejarás de recibir avisos en este teléfono. Podrás volver a entrar cuando quieras.</string>
+    <string name="perfil_eliminar">Eliminar mi cuenta</string>
+    <string name="perfil_version">Cívika, versión %1$s</string>
+    <string name="eliminar_titulo">¿Eliminar tu cuenta?</string>
+    <string name="eliminar_texto">Esto no se puede deshacer. Borramos tu nombre y tu correo, y te sacamos de la app. Tus reportes y apoyos se conservan sin tu identidad porque forman parte de problemas públicos. Los reportes pendientes de este teléfono se descartan.</string>
+    <string name="eliminar_palabra">ELIMINAR</string>
+    <string name="eliminar_campo">Escribe %1$s para confirmar</string>
+    <string name="eliminar_confirmar">Eliminar mi cuenta</string>
+</resources>

@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="continuar">Continuar</string>
+    <string name="reporte_titulo">Reportar problema</string>
+    <string name="reporte_paso_de">Paso %1$d de %2$d · %3$s</string>
+    <string name="paso_foto">Foto</string>
+    <string name="paso_ubicacion">Ubicación</string>
+    <string name="paso_categoria">Qué pasa</string>
+    <string name="paso_duplicados">¿Es el mismo?</string>
+    <string name="paso_enviado">Enviado</string>
+    <string name="reporte_salir_titulo">¿Salir sin enviar?</string>
+    <string name="reporte_salir_texto">Si sales ahora, se pierden las fotos y lo que escribiste.</string>
+    <string name="reporte_salir_confirmar">Salir</string>
+    <string name="reporte_salir_seguir">Seguir reportando</string>
+
+    <!-- Paso 1 -->
+    <string name="foto_titulo">Agrega una foto del problema</string>
+    <string name="foto_texto">Puedes subir hasta %1$d fotos. Antes de enviarlas borramos la ubicación que guarda la cámara.</string>
+    <string name="foto_tomar">Tomar foto</string>
+    <string name="foto_galeria">Elegir de la galería</string>
+    <string name="foto_error">No pudimos usar esa foto. Prueba con otra.</string>
+    <string name="foto_cd">Foto %1$d del problema</string>
+    <string name="foto_quitar">Quitar la foto %1$d</string>
+    <string name="camara_cerrar">Cerrar cámara</string>
+    <string name="camara_tomar_foto">Tomar foto</string>
+    <string name="camara_error">No se pudo abrir la cámara. Cierra esta pantalla y elige una foto de la galería.</string>
+    <string name="camara_permiso_titulo">Necesitamos tu cámara</string>
+    <string name="camara_permiso_texto">Para tomar la foto del problema, Cívika necesita usar la cámara. Solo la usamos cuando tomas una foto.</string>
+    <string name="camara_permiso_rechazado">Sin permiso de cámara no podemos abrirla. Puedes permitirlo en los ajustes del teléfono o elegir una foto de la galería.</string>
+    <string name="camara_permitir">Permitir cámara</string>
+    <string name="camara_usar_galeria">Usar la galería</string>
+
+    <!-- Paso 2 -->
+    <string name="ubicacion_titulo">¿Dónde está el problema?</string>
+    <string name="ubicacion_texto">Arrastra el mapa hasta que el pin quede sobre el lugar exacto.</string>
+    <string name="ubicacion_usar_mia">Usar mi ubicación</string>
+    <string name="ubicacion_buscando">Buscando tu ubicación…</string>
+    <string name="ubicacion_mapa_cd">Mapa para elegir el lugar del problema. Arrástralo para mover el punto.</string>
+    <string name="ubicacion_pin_cd">Lugar del problema, en el centro del mapa</string>
+    <string name="ubicacion_dentro">Este punto está dentro de la zona piloto.</string>
+    <string name="ubicacion_simulada">Detectamos una ubicación simulada. Tu reporte pasará por revisión antes de derivarse.</string>
+
+    <!-- Paso 3 -->
+    <string name="categoria_titulo">¿Qué está pasando?</string>
+    <string name="categoria_elegir">Elige una categoría.</string>
+    <string name="descripcion">Descripción</string>
+    <string name="descripcion_ayuda">%1$d de %2$d caracteres. Cuenta qué ves y dónde, en pocas palabras.</string>
+
+    <!-- Paso 4 -->
+    <string name="duplicados_buscando">Buscando reportes parecidos…</string>
+    <string name="duplicados_titulo">¿Es el mismo problema?</string>
+    <string name="duplicados_texto">Encontramos esto cerca de ti. Si es lo mismo, apóyalo con tus fotos en vez de repetirlo: así sube su prioridad.</string>
+    <string name="duplicados_meta">%1$s · a %2$d m · %3$s · %4$s</string>
+    <string name="duplicados_apoyar">Es el mismo problema: apoyar</string>
+    <string name="duplicados_otro">Es otro problema</string>
+
+    <!-- Paso 5 -->
+    <string name="enviado_titulo">Reporte enviado</string>
+    <string name="enviado_titulo_apoyo">Apoyo enviado</string>
+    <string name="enviado_titulo_pendiente">Reporte guardado</string>
+    <string name="enviado_titulo_enviando">Enviando tu reporte</string>
+    <string name="enviado_titulo_error">No se pudo enviar</string>
+    <string name="enviado_pendiente_texto">No hay conexión. Tu reporte se enviará cuando vuelva la señal; puedes cerrar la app.</string>
+    <string name="enviado_codigo">Tu código</string>
+    <string name="enviado_entidad">Lo atenderá: %1$s</string>
+    <string name="enviado_sin_entidad">Un moderador lo revisará y lo derivará a la entidad responsable.</string>
+    <string name="enviado_ver_reporte">Ver mi reporte</string>
+    <string name="enviado_ver_mis_reportes">Ver mis reportes</string>
+    <string name="enviado_cerrar">Volver al inicio</string>
+    <string name="avisos_titulo">¿Quieres enterarte de cómo avanza?</string>
+    <string name="avisos_texto">Activa los avisos y te diremos cuando cambie el estado de tus reportes.</string>
+    <string name="avisos_activar">Activar avisos</string>
+    <string name="avisos_ahora_no">Ahora no</string>
+
+    <!-- Estado de un envío en «Mis reportes» y en el paso final -->
+    <string name="envio_motivo_sin_conexion">Sin conexión. Se enviará cuando vuelva la señal.</string>
+    <string name="envio_motivo_sesion">Inicia sesión para que se envíe tu reporte.</string>
+    <string name="envio_motivo_foto_perdida">Una de las fotos ya no está en tu teléfono. Descarta este reporte y vuelve a crearlo.</string>
+</resources>

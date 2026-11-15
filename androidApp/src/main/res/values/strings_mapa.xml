@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="mapa_atribucion">OpenFreeMap © OpenMapTiles · Datos de OpenStreetMap</string>
+    <string name="mapa_descripcion">Mapa de incidentes de la zona piloto. Para una alternativa sin mapa, usa «Ver como lista».</string>
+    <string name="mapa_ver_lista">Ver como lista</string>
+    <string name="mapa_ver_mapa">Ver mapa</string>
+    <string name="mapa_mi_ubicacion">Mi ubicación</string>
+    <string name="mapa_filtros_categoria">Categoría</string>
+    <string name="mapa_filtros_estado">Estado</string>
+    <string name="mapa_quitar_filtros">Quitar filtros</string>
+    <string name="mapa_sin_resultados_titulo">Ningún problema con esos filtros</string>
+    <string name="mapa_sin_resultados_texto">Quita algún filtro para ver más incidentes.</string>
+    <string name="mapa_ver_detalle">Ver detalle</string>
+    <string name="mapa_permiso_ubicacion_negado">No pudimos ver dónde estás. Activa el permiso de ubicación en los ajustes del teléfono o mueve el mapa a mano.</string>
+    <string name="mapa_ubicacion_no_disponible">No encontramos tu ubicación. Revisa que el GPS esté encendido.</string>
+    <string name="mapa_cerrar_resumen">Cerrar resumen</string>
+    <string name="familia_abierto">Abiertos</string>
+    <string name="familia_en_atencion">En atención</string>
+    <string name="familia_resuelto">Resueltos</string>
+    <string name="familia_rechazado">Rechazados</string>
+    <string name="tarjeta_meta_corta">%1$s · %2$s</string>
+</resources>

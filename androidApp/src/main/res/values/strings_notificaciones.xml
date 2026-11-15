@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="notificaciones_titulo">Notificaciones</string>
+    <string name="notificaciones_marcar_todas">Marcar todas como leídas</string>
+    <string name="notificaciones_vacio_titulo">Sin avisos por ahora</string>
+    <string name="notificaciones_vacio_texto">Cuando cambie el estado de un problema que reportaste o apoyaste, te avisaremos aquí.</string>
+    <string name="notificaciones_sin_sesion_titulo">Inicia sesión para ver tus avisos</string>
+    <string name="notificaciones_sin_sesion_texto">Los avisos llegan a quienes reportan o apoyan un problema.</string>
+    <string name="notificacion_estado">«%1$s» ahora está: %2$s</string>
+    <string name="notificacion_reabierto">Reabrieron «%1$s»: varios vecinos dicen que sigue igual.</string>
+    <string name="notificacion_comentario">La entidad escribió un mensaje en «%1$s».</string>
+    <string name="notificacion_otro">Hay novedades en %1$s.</string>
+    <string name="notificacion_sin_leer">Nuevo</string>
+</resources>
