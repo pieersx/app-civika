@@ -23,8 +23,8 @@ La API local queda en `http://127.0.0.1:54321` y Studio en `http://127.0.0.1:543
 
 El bucket privado `fotos` se declara en `config.toml` y se crea al levantar el entorno. Los paths deben empezar por
 el uid del usuario (`fotos/{uid}/...`) y `crear_reporte` valida que el objeto exista y que su `owner` sea el usuario
-autenticado. La API no expone `storage_path` a `authenticated`; la descarga de fotos se hará con la RPC `urls_fotos`
-(Sprint 2).
+autenticado. La API no expone `storage_path` a `authenticated`: las rutas visibles las devuelve la RPC `fotos_incidente` y el
+cliente pide la URL firmada con su propio JWT (política `fotos_lectura_visible`, ADR-19).
 
 ## Migraciones
 
@@ -46,11 +46,30 @@ No se edita el esquema desde Studio ni se suben cambios manuales a producción. 
 5. `mfa_restrictivo`: política restrictiva que exige `aal2` (segundo factor) a moderación y entidad.
 6. `storage_subida_fotos`: política de `insert` en `storage.objects`: el ciudadano activo sube solo al bucket `fotos`, en su carpeta `{uid}/` y a un solo nivel. No se puede sobrescribir (nada de `upsert`): la app debe subir cada foto con un nombre nuevo. El tamaño (2 MiB) y los tipos (JPEG y WebP) los limita `config.toml`, no la política: hay que replicarlos en Supabase Cloud.
 
-**Estado de las RPC (funciones que llama la app):**
+7. `tope_reportes_originales`: el tope de 10 reportes por hora de `crear_reporte` cuenta solo los originales.
+8. `apoyos_y_fotos`: `apoyar_incidente`, la política de lectura de `storage.objects` (`private.puede_ver_foto`) y `fotos_incidente`.
+9. `ciudadano`: `detalle_incidente`, `mis_incidentes`, `denunciar_incidente`, `verificar_resolucion` (con reapertura a los 3 «sigue igual»), bandeja de notificaciones por trigger y `mis_notificaciones`, `registrar_dispositivo`, consentimiento al registrarse, `eliminar_mi_cuenta` / `eliminar_cuenta`, `resumen_publico` y el recálculo diario de prioridad con `pg_cron`.
+10. `panel`: RPC del panel web, todas con rol y `aal2` comprobados dentro: `listar_incidentes_panel`, `historial_panel`, `comentarios_panel`, `comentar_incidente`, `fotos_incidente_panel`, `listar_denuncias`, `resolver_denuncia`, `ocultar_foto`, `marcar_duplicado` e `indicadores_panel`.
+11. `push_notificaciones`: trigger que llama a la Edge Function `notificar` con `pg_net`; la URL y el secreto están en Vault (ver `docs/despliegue.md`).
 
-| Ya existen | Pendientes (están en `docs/arquitectura.md`) |
+**RPC que llaman la app y el panel:**
+
+| Quién | Funciones |
 |---|---|
-| `buscar_duplicados`, `crear_reporte`, `cambiar_estado`, `listar_incidentes_publicos`, `historial_publico`, `comentarios_publicos` | `apoyar_incidente`, `eliminar_mi_cuenta`, `eliminar_cuenta`, `urls_fotos`, recálculo diario de prioridad con `pg_cron` y la política de lectura de fotos en `storage.objects` (la de subida ya existe) |
+| Cualquiera (también sin sesión) | `listar_incidentes_publicos`, `detalle_incidente`, `historial_publico`, `comentarios_publicos`, `fotos_incidente`, `resumen_publico` |
+| Ciudadano | `buscar_duplicados`, `crear_reporte`, `apoyar_incidente`, `mis_incidentes`, `denunciar_incidente`, `verificar_resolucion`, `mis_notificaciones`, `registrar_dispositivo`, `eliminar_mi_cuenta` |
+| Entidad y moderación (con MFA) | `listar_incidentes_panel`, `historial_panel`, `comentarios_panel`, `fotos_incidente_panel`, `indicadores_panel`, `cambiar_estado` |
+| Solo entidad | `comentar_incidente` |
+| Solo moderación | `listar_denuncias`, `resolver_denuncia`, `ocultar_foto`, `marcar_duplicado` |
+| Solo `service_role` | `eliminar_cuenta` |
+
+Pendiente: versionar las RPC que usa la app (`crear_reporte_v1`, ver `docs/arquitectura.md` §11).
+
+## Edge Functions
+
+`functions/notificar` envía el push por FCM HTTP v1 cuando se inserta una fila en `notificaciones`. Se autentica con
+un secreto compartido (`x-webhook-secret`), no con el JWT de un usuario. Sus secretos están descritos en
+`functions/.env.example`. Para probarla en local: `supabase functions serve --env-file supabase/functions/.env`.
 
 Las tablas nuevas **no** se exponen automáticamente a la Data API. Cada tabla necesita `GRANT` explícito; las
 escrituras con reglas de negocio pasan por RPC `security definer`, no por `UPDATE` directo.
@@ -66,6 +85,8 @@ escrituras con reglas de negocio pasan por RPC `security definer`, no por `UPDAT
 - RLS de entidades A/B y lectura pública sin datos personales;
 - privacidad de fotos e historial: columnas ocultas, dueño del objeto y versiones archivadas;
 - subida de fotos a Storage: solo en la carpeta propia, no anónimos ni cuentas desactivadas.
+- apoyos: idempotencia, fotos, roles y el tope anti-spam (`04_apoyar.sql`);
+- lectura de fotos, detalle, denuncias, verificación, notificaciones, eliminación de cuenta y RPC del panel con entidades A/B y MFA (`05_ciudadano_y_panel.sql`).
 
 La CI ejecuta el mismo comando en el job `Base de datos (pgTAP)`.
 
