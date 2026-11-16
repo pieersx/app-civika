@@ -26,7 +26,7 @@ export function FaltaConfigurar({ configuracion }: { configuracion: Extract<Conf
         )}
         <p className="text-sm text-tinta-suave">
           En tu computadora: copia <code className="font-mono">.env.example</code> como <code className="font-mono">.env.local</code>,
-          complétalo y reinicia <code className="font-mono">npm run dev</code>. En Vercel: añádelas en Settings → Environment Variables
+          complétalo y reinicia <code className="font-mono">pnpm dev</code>. En Vercel: añádelas en Settings → Environment Variables
           y vuelve a desplegar. Usa solo la clave anon, nunca la service_role.
         </p>
       </div>
