@@ -49,6 +49,12 @@ select ('00000000-0000-0000-0000-0000000005b' || right(i.codigo, 1))::uuid,
 from public.incidentes i
 where i.codigo like 'T05-%';
 
+-- Un vecino que solo apoyó el futuro duplicado: también debe recibir el aviso de rechazo.
+insert into auth.users (id, email, raw_user_meta_data)
+values ('00000000-0000-0000-0000-000000000508', 'vecino05d@test.local', '{"nombre":"Vecino D"}'::jsonb);
+insert into public.apoyos (usuario_id, incidente_id)
+values ('00000000-0000-0000-0000-000000000508', '00000000-0000-0000-0000-0000000005a5');
+
 insert into public.historial_estados (incidente_id, estado_anterior, estado_nuevo, comentario, autor_id)
 values
     ('00000000-0000-0000-0000-0000000005a2', 'en_atencion', 'resuelto', null, '00000000-0000-0000-0000-000000000506'),
@@ -425,6 +431,41 @@ select is(
     '00000000-0000-0000-0000-0000000005a4'::uuid,
     'el reporte del duplicado pasa al incidente original'
 );
+select is(
+    (select count(*) from public.notificaciones
+     where usuario_id = '00000000-0000-0000-0000-000000000501'
+       and incidente_id = '00000000-0000-0000-0000-0000000005a5' and estado = 'rechazado'),
+    1::bigint,
+    'quien reportó el duplicado recibe el aviso de rechazo'
+);
+select is(
+    (select count(*) from public.notificaciones
+     where usuario_id = '00000000-0000-0000-0000-000000000508'
+       and incidente_id = '00000000-0000-0000-0000-0000000005a5' and estado = 'rechazado'),
+    1::bigint,
+    'quien solo lo apoyó también lo recibe'
+);
+select is(
+    (select count(*) from public.notificaciones
+     where usuario_id = '00000000-0000-0000-0000-000000000505'
+       and incidente_id = '00000000-0000-0000-0000-0000000005a5'),
+    0::bigint,
+    'y quien marcó el duplicado no recibe aviso'
+);
+set local role authenticated;
+set local request.jwt.claims = '{"sub":"00000000-0000-0000-0000-000000000501","role":"authenticated"}';
+select is(
+    (select motivo_rechazo from public.detalle_incidente('00000000-0000-0000-0000-0000000005a5')),
+    'Duplicado de T05-004',
+    'y puede abrir el duplicado rechazado para ver el motivo'
+);
+set local request.jwt.claims = '{"sub":"00000000-0000-0000-0000-000000000503","role":"authenticated"}';
+select is(
+    (select count(*) from public.detalle_incidente('00000000-0000-0000-0000-0000000005a5')), 0::bigint,
+    'otra persona no ve el duplicado rechazado'
+);
+reset role;
+reset request.jwt.claims;
 
 -- ---------------------------------------------------------------- Cuenta
 set local role authenticated;
