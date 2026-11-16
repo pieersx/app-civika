@@ -87,7 +87,7 @@ class DatosDemo(val ahora: () -> Instant = { Clock.System.now() }) {
             incidente(131, "Contenedor desbordado", CategoriasPiloto.RESIDUOS, Estado.REPORTADO, 4, 0, campus, -12.0584, -77.0871),
             incidente(87, "Rampa bloqueada por un poste", CategoriasPiloto.ACCESIBILIDAD, Estado.RESUELTO, 18, 9, campus, -12.0601, -77.0826),
             incidente(90, "Hueco grande en la avenida", CategoriasPiloto.VIAL, Estado.RECHAZADO, 0, 4, alrededores, -12.0655, -77.0902),
-            incidente(127, "Vereda rota junto al paradero", CategoriasPiloto.VIAL, Estado.DERIVADO, 6, 2, campus, -12.0547, -77.0888),
+            incidente(127, "Vereda rota junto al paradero", CategoriasPiloto.VIAL, Estado.DERIVADO, 6, 2, campus, -12.0547, -77.0877),
             incidente(129, "Desmonte en la berma central", CategoriasPiloto.RESIDUOS, Estado.DERIVADO, 2, 6, alrededores, -12.0489, -77.0935),
         )
     }

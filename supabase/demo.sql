@@ -48,7 +48,7 @@ from (
         (4, 'DEMO-004', 'vial',          'Ciudad Universitaria UNMSM',             'reportado',                   1, -77.0850, -12.0560, 0),
         (5, 'DEMO-005', 'residuos',      'Ciudad Universitaria UNMSM',             'derivado',                    0, -77.0870, -12.0610, 1),
         (6, 'DEMO-006', 'accesibilidad', 'Alrededores de la Ciudad Universitaria', 'en_atencion',                20, -77.0830, -12.0650, 2),
-        (7, 'DEMO-007', 'vial',          'Ciudad Universitaria UNMSM',             'resuelto',                   30, -77.0800, -12.0540, 5),
+        (7, 'DEMO-007', 'vial',          'Ciudad Universitaria UNMSM',             'resuelto',                   30, -77.0813, -12.0562, 5),
         (8, 'DEMO-008', 'residuos',      'Ciudad Universitaria UNMSM',             'rechazado',                   3, -77.0860, -12.0580, 0)
 ) as t (n, codigo, categoria, zona, estado, dias, lon, lat, apoyos);
 
