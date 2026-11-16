@@ -7,6 +7,7 @@ import pe.civika.shared.domain.Relacion
 import pe.civika.shared.domain.TipoNotificacion
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
 import kotlin.test.assertIs
 import kotlin.test.assertNotNull
 import kotlin.test.assertNull
@@ -189,6 +190,14 @@ class MapeoTest {
 
         assertEquals(TipoNotificacion.OTRO, dto.aDominio()?.tipo)
         assertEquals(TipoNotificacion.REABIERTO, dto.copy(tipo = "reabierto").aDominio()?.tipo)
+    }
+
+    @Test
+    fun elTopeDeReportesPorHoraSeReintentaYNoEsUnErrorDeDatos() {
+        val error = clasificarErrorPostgres("22023", "Demasiados reportes en la última hora", 400)
+
+        assertIs<ErrorCivika.DemasiadosIntentos>(error)
+        assertFalse(error.esDefinitivo)
     }
 
     @Test

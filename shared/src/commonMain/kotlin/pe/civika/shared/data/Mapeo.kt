@@ -173,6 +173,9 @@ internal fun clasificarErrorPostgres(codigo: String?, mensaje: String?, estadoHt
     val texto = mensaje.orEmpty()
     return when {
         codigo == "P0001" && texto.contains("zona", ignoreCase = true) -> ErrorCivika.FueraDeZona()
+        // El tope de reportes por hora comparte el código 22023 con los datos inválidos, pero se
+        // resuelve esperando: no debe tratarse como un error definitivo.
+        codigo == "22023" && texto.contains("demasiados reportes", ignoreCase = true) -> ErrorCivika.DemasiadosIntentos()
         codigo == "22023" -> ErrorCivika.DatosInvalidos(texto)
         codigo == "42501" && texto.contains("sesión", ignoreCase = true) -> ErrorCivika.SesionRequerida()
         codigo == "42501" -> ErrorCivika.SinPermiso(texto)
