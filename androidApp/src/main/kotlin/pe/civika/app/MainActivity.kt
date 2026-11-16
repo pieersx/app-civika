@@ -34,13 +34,17 @@ class MainActivity : ComponentActivity() {
     /** Incidente que pidió abrir un aviso push; la navegación lo consume. */
     private val incidentePendiente = mutableStateOf<String?>(null)
 
+    /** El aviso de la intención de arranque ya se abrió: al rotar o restaurar el proceso no se repite. */
+    private var avisoAtendido = false
+
     override fun onCreate(savedInstanceState: Bundle?) {
         val splash = installSplashScreen()
         enableEdgeToEdge()
         super.onCreate(savedInstanceState)
         // El splash se queda hasta saber si hay una sesión guardada: así no se ve un destello de «sin sesión».
         splash.setKeepOnScreenCondition { auth.sesion.value is EstadoSesion.Cargando }
-        incidentePendiente.value = idDeIncidente(intent)
+        avisoAtendido = savedInstanceState?.getBoolean(CLAVE_AVISO_ATENDIDO) ?: false
+        if (!avisoAtendido) incidentePendiente.value = idDeIncidente(intent)
 
         setContent {
             val tema by ajustes.tema.collectAsStateWithLifecycle(initialValue = ModoTema.SISTEMA)
@@ -60,7 +64,11 @@ class MainActivity : ComponentActivity() {
                         CivikaNavegacion(
                             sesion = sesion,
                             incidentePendiente = incidentePendiente.value,
-                            onIncidenteAbierto = { incidentePendiente.value = null },
+                            onIncidenteAbierto = {
+                                incidentePendiente.value = null
+                                avisoAtendido = true
+                                intent?.removeExtra(Notificador.EXTRA_INCIDENTE_ID)
+                            },
                         )
                     }
                 }
@@ -71,7 +79,17 @@ class MainActivity : ComponentActivity() {
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
         setIntent(intent)
+        avisoAtendido = false
         incidentePendiente.value = idDeIncidente(intent)
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putBoolean(CLAVE_AVISO_ATENDIDO, avisoAtendido)
+    }
+
+    private companion object {
+        const val CLAVE_AVISO_ATENDIDO = "aviso_atendido"
     }
 
     private fun idDeIncidente(intent: Intent?): String? =

@@ -1,14 +1,17 @@
 package pe.civika.app.feature.reporte
 
 import androidx.lifecycle.SavedStateHandle
+import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.test.runTest
 import pe.civika.app.FakeUbicacion
 import pe.civika.app.Mundo
 import pe.civika.app.PruebaViewModel
 import pe.civika.app.device.UbicacionObtenida
+import pe.civika.shared.data.IncidenteRepository
 import pe.civika.shared.domain.CategoriasPiloto
 import pe.civika.shared.domain.ErrorCivika
 import pe.civika.shared.domain.EstadoEnvio
+import pe.civika.shared.domain.PosibleDuplicado
 import pe.civika.shared.domain.TipoEnvio
 import pe.civika.shared.domain.ZonaPiloto
 import kotlin.test.Test
@@ -290,5 +293,37 @@ class ReporteViewModelTest : PruebaViewModel() {
 
         assertEquals("CVK-000132", vm.estado.value.envio?.codigo)
         assertEquals(EstadoEnvio.ENVIADO, vm.estado.value.envio?.estado)
+    }
+
+    @Test
+    fun siSeVuelveAtrasMientrasSeBuscanDuplicadosNoSeEnviaSolo() = runTest {
+        val pausa = CompletableDeferred<Unit>()
+        val lento = object : IncidenteRepository by mundo.incidentes {
+            override suspend fun buscarDuplicados(latitud: Double, longitud: Double, categoriaId: Int): List<PosibleDuplicado> {
+                pausa.await()
+                return emptyList()
+            }
+        }
+        val vm = ReporteViewModel(
+            estadoGuardado = SavedStateHandle(),
+            incidentes = lento,
+            cola = mundo.cola,
+            auth = mundo.auth,
+            fotos = mundo.fotos,
+            ubicacion = ubicacion,
+            nuevoId = { "cliente-lento" },
+        )
+        vm.hastaCategoria()
+        vm.cambiarCategoria(CategoriasPiloto.RESIDUOS.id)
+        vm.cambiarDescripcion(descripcionValida)
+        vm.siguiente()
+        assertEquals(PasoReporte.DUPLICADOS, vm.estado.value.paso)
+
+        assertTrue(vm.atras()) // el usuario quiere corregir la descripción
+        pausa.complete(Unit) // la búsqueda termina cuando ya volvió
+
+        assertEquals(PasoReporte.CATEGORIA, vm.estado.value.paso)
+        assertFalse(vm.estado.value.buscandoDuplicados)
+        assertTrue(mundo.cola.todos().isEmpty())
     }
 }

@@ -95,6 +95,7 @@ class ReporteViewModel(
     val estado: StateFlow<ReporteUiState> = _estado.asStateFlow()
 
     private var observandoEnvio: Job? = null
+    private var buscandoDuplicados: Job? = null
 
     init {
         viewModelScope.launch {
@@ -214,6 +215,11 @@ class ReporteViewModel(
         }
         if (anterior == null) return false
         if (e.enviando) return true
+        if (e.paso == PasoReporte.DUPLICADOS) {
+            // Si vuelve a corregir, la búsqueda en curso ya no debe enviar el reporte por su cuenta.
+            buscandoDuplicados?.cancel()
+            actualizar { it.copy(buscandoDuplicados = false, duplicados = emptyList()) }
+        }
         irA(anterior)
         return true
     }
@@ -232,7 +238,8 @@ class ReporteViewModel(
         val lon = e.longitud ?: return
         val categoriaId = e.categoriaId ?: return
         actualizar { it.copy(buscandoDuplicados = true, duplicados = emptyList(), error = null) }
-        viewModelScope.launch {
+        buscandoDuplicados?.cancel()
+        buscandoDuplicados = viewModelScope.launch {
             val encontrados = try {
                 incidentes.buscarDuplicados(lat, lon, categoriaId)
             } catch (e: CancellationException) {
@@ -243,7 +250,7 @@ class ReporteViewModel(
             }
             actualizar { it.copy(buscandoDuplicados = false, duplicados = encontrados) }
             // Si no hay nada parecido cerca no se le pregunta nada: el reporte sale en el mismo paso.
-            if (encontrados.isEmpty()) enviarComoNuevo()
+            if (encontrados.isEmpty() && _estado.value.paso == PasoReporte.DUPLICADOS) enviarComoNuevo()
         }
     }
 
