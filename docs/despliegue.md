@@ -51,14 +51,20 @@ Convertir un archivo a base64 para un secreto de GitHub:
   recalcula cada día, y sin `pg_net` no hay push.
 - [ ] **Storage:** bucket `fotos` **privado**, con `file_size_limit` de 2 MB y `allowed_mime_types` `image/jpeg` e
   `image/webp`. En la nube el bucket no lo crea `config.toml`: créalo en *Storage → New bucket* con esos límites.
-- [ ] **Auth → URL Configuration:** *Site URL* con la URL de producción del panel; en *Redirect URLs*, la de
-  producción y el patrón de vistas previas de Vercel (`https://*-<tu-equipo>.vercel.app/**`). **No** se añade
-  `localhost`: para desarrollar se usa Supabase local.
-- [ ] **Auth → Providers → Email:** confirmación de correo activada.
+- [x] **Auth → URL Configuration** (aplicado el 16-nov-2026 con `supabase config push` y verificado con
+  `supabase config diff`, sección `[remotes.produccion]` de `config.toml`): *Site URL* con la URL de producción del
+  panel; en *Redirect URLs*, la de producción y el patrón de vistas previas de Vercel
+  (`https://*-<tu-equipo>.vercel.app/**`, aquí `*-pieersxs-projects`). **No** se añade `localhost`: para desarrollar se
+  usa Supabase local.
+- [x] **Auth → Providers → Email:** confirmación de correo activada (`enable_confirmations = true` en
+  `[remotes.produccion.auth.email]`).
 - [ ] **Auth → Attack Protection:** captcha (Turnstile o hCaptcha) en el registro. Ojo: al activarlo, la app y el
   panel tienen que enviar el token del captcha; hasta integrarlo, déjalo desactivado y apóyate en los límites de Auth.
-- [ ] **Auth → Sign In / Providers → Email:** longitud mínima de contraseña en **8** (como exige la app; `config.toml`
-  solo vale en local, en la nube se cambia aquí).
+- [x] **Auth → Sign In / Providers → Email:** longitud mínima de contraseña en **8** (como exige la app). La aplica
+  `supabase config push`; sin la sección `[remotes.produccion]`, ese comando empujaría la configuración de desarrollo
+  (confirmación de correo apagada y `site_url` en 127.0.0.1), así que no lo uses sin ella. Ejecuta siempre
+  `supabase config diff` antes de empujar y comprueba que solo cambie lo que esperas. El bloque solo se aplica si el
+  proyecto enlazado es el de su `project_id`; `config push` no toca el límite de correos por hora (`rate_limit`).
 - [ ] **Auth → MFA:** TOTP activado. Sin él, moderación y entidad no pueden entrar al panel.
 - [ ] **SMTP propio** (un proveedor con plan gratuito): el correo integrado de Supabase tiene límites muy bajos y
   suele caer en spam.

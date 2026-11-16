@@ -419,3 +419,32 @@ enabled = true
 # formatted with uppercase keywords, indent 2, max width 180, trailing commas,
 # and column/key alignment. Set to "null" to emit raw, unformatted SQL.
 # format_options = "{\"keywordCase\":\"upper\",\"indent\":2,\"maxWidth\":180,\"commaStyle\":\"trailing\"}"
+
+# ---------------------------------------------------------------------------
+# Producción (proyecto `civika` en Supabase, región São Paulo). `supabase config push` aplica el config base
+# más lo que se declare aquí; sin esta sección, el push de desarrollo dejaría la confirmación de correo
+# apagada y la URL del sitio en 127.0.0.1. Ver docs/despliegue.md.
+# ---------------------------------------------------------------------------
+[remotes.produccion]
+project_id = "phzoxbufjhxeefejlapc"
+
+[remotes.produccion.auth]
+site_url = "https://civika-panel.vercel.app"
+# La segunda entrada cubre las vistas previas de Vercel de cada pull request.
+additional_redirect_urls = ["https://civika-panel.vercel.app/**", "https://*-pieersxs-projects.vercel.app/**"]
+minimum_password_length = 8
+
+[remotes.produccion.auth.email]
+# Las cuentas nuevas deben confirmar su correo antes de iniciar sesión.
+enable_confirmations = true
+# max_frequency, otp_length y los ajustes de db.pooler y storage.vector de abajo NO son decisiones nuevas: repiten
+# el valor que el proyecto ya tiene en la nube. Sin ellos, el push los cambiaría por los de desarrollo.
+max_frequency = "1m0s"
+otp_length = 8
+
+[remotes.produccion.db.pooler]
+default_pool_size = 15
+max_client_conn = 200
+
+[remotes.produccion.storage.vector]
+enabled = false
