@@ -72,5 +72,43 @@ select is(
     'ningún punto pegado al borde del campus queda sin zona'
 );
 
+-- Catálogo del piloto: entidades simuladas y reglas de ruteo (ADR-12).
+select is(
+    (select array_agg(nombre order by nombre) from public.entidades
+     where nombre in ('Municipalidad de Lima (simulada)', 'Servicio de limpieza pública (simulado)',
+                      'Universidad Nacional Mayor de San Marcos')),
+    array['Municipalidad de Lima (simulada)', 'Servicio de limpieza pública (simulado)', 'Universidad Nacional Mayor de San Marcos'],
+    'las tres entidades del piloto existen con sus nombres, marcadas como simuladas'
+);
+select is(
+    (select count(*) from public.entidades where nombre like '%distrito piloto%'),
+    0::bigint,
+    'no quedan entidades con los nombres antiguos'
+);
+select is(
+    (select count(*) from public.reglas_ruteo r
+     join public.categorias c on c.id = r.categoria_id and c.service_code in ('vial', 'residuos', 'accesibilidad')
+     join public.zonas z on z.id = r.zona_id
+      and z.nombre in ('Ciudad Universitaria UNMSM', 'Alrededores de la Ciudad Universitaria')),
+    6::bigint,
+    'cada categoría del piloto tiene regla en el campus y en los alrededores (3 + 3)'
+);
+select is(
+    (select e.nombre from public.reglas_ruteo r
+     join public.categorias c on c.id = r.categoria_id and c.service_code = 'residuos'
+     join public.zonas z on z.id = r.zona_id and z.nombre = 'Alrededores de la Ciudad Universitaria'
+     join public.entidades e on e.id = r.entidad_id),
+    'Servicio de limpieza pública (simulado)',
+    'los residuos de los alrededores van al servicio de limpieza pública'
+);
+select is(
+    (select e.nombre from public.reglas_ruteo r
+     join public.categorias c on c.id = r.categoria_id and c.service_code = 'vial'
+     join public.zonas z on z.id = r.zona_id and z.nombre = 'Ciudad Universitaria UNMSM'
+     join public.entidades e on e.id = r.entidad_id),
+    'Universidad Nacional Mayor de San Marcos',
+    'lo vial dentro del campus va a la universidad'
+);
+
 select * from finish();
 rollback;

@@ -21,7 +21,7 @@ where id = '00000000-0000-0000-0000-000000000002';
 
 update public.usuarios
 set rol = 'entidad',
-    entidad_id = (select id from public.entidades where nombre = 'Municipalidad del distrito piloto')
+    entidad_id = (select id from public.entidades where nombre = 'Municipalidad de Lima (simulada)')
 where id = '00000000-0000-0000-0000-000000000003';
 
 update public.usuarios
@@ -176,7 +176,7 @@ select is(
 select is((select estado from creados where nombre = 'distrito'), 'derivado'::public.estado, 'distrito vial se deriva');
 select is(
     (select entidad_id from creados where nombre = 'distrito'),
-    (select id from public.entidades where nombre = 'Municipalidad del distrito piloto'),
+    (select id from public.entidades where nombre = 'Municipalidad de Lima (simulada)'),
     'distrito vial se rutea a la municipalidad'
 );
 select is((select estado from creados where nombre = 'simulado'), 'en_revision'::public.estado, 'ubicación simulada va a revisión');
@@ -577,7 +577,7 @@ select is(
         'derivado',
         0,
         'Se reasigna a la municipalidad',
-        (select id from public.entidades where nombre = 'Municipalidad del distrito piloto')
+        (select id from public.entidades where nombre = 'Municipalidad de Lima (simulada)')
     )),
     1::bigint,
     'moderación deriva con entidad explícita'
@@ -585,7 +585,7 @@ select is(
 reset role;
 select is(
     (select entidad_id from public.incidentes where id = (select incidente_id from creados where nombre = 'simulado2')),
-    (select id from public.entidades where nombre = 'Municipalidad del distrito piloto'),
+    (select id from public.entidades where nombre = 'Municipalidad de Lima (simulada)'),
     'la entidad asignada al derivar quedó persistida'
 );
 select is(

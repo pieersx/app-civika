@@ -173,6 +173,9 @@ class FakeAuthRepository(
     }
 }
 
+/** Entidad que atiende los reportes de ejemplo; es la misma que el seed (supabase/seed.sql). */
+const val ENTIDAD_PILOTO = "Municipalidad de Lima (simulada)"
+
 /** Datos de ejemplo de la zona piloto para avanzar sin backend y para las pruebas. */
 class FakeIncidenteRepository(
     private val demo: DatosDemo = DatosDemo(),
@@ -216,7 +219,7 @@ class FakeIncidenteRepository(
         return DetalleIncidente(
             incidente = incidente,
             descripcion = incidente.titulo + ". Lleva varios días así y dificulta el paso de los vecinos.",
-            entidad = if (incidente.estado == Estado.EN_REVISION) null else "Municipalidad del distrito piloto",
+            entidad = if (incidente.estado == Estado.EN_REVISION) null else ENTIDAD_PILOTO,
             yoApoyo = conSesion && incidenteId in demo.apoyados.value,
             esMio = esMio,
             miVerificacion = if (conSesion) demo.verificaciones.value[incidenteId] else null,
@@ -273,7 +276,7 @@ class FakeIncidenteRepository(
             cambiarApoyos(incidenteId, +1)
         }
         val actual = demo.incidentes.value.first { it.id == incidenteId }
-        return ReporteCreado(actual.id, actual.codigo, actual.estado, "Municipalidad del distrito piloto")
+        return ReporteCreado(actual.id, actual.codigo, actual.estado, ENTIDAD_PILOTO)
     }
 
     override suspend fun retirarApoyo(incidenteId: String) {
@@ -350,7 +353,7 @@ class FakeReporteRepository(
         )
         demo.incidentes.update { listOf(incidente) + it }
         demo.propios.update { it + incidente.id }
-        val entidad = "Municipalidad del distrito piloto".takeIf { estado == Estado.DERIVADO }
+        val entidad = ENTIDAD_PILOTO.takeIf { estado == Estado.DERIVADO }
         return ReporteCreado(incidente.id, incidente.codigo, estado, entidad).also { creados[reporte.clienteId] = it }
     }
 }

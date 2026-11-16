@@ -5,6 +5,7 @@ import kotlinx.coroutines.test.runTest
 import pe.civika.app.Mundo
 import pe.civika.app.PruebaViewModel
 import pe.civika.shared.data.IncidenteRepository
+import pe.civika.shared.data.ENTIDAD_PILOTO
 import pe.civika.shared.domain.DetalleIncidente
 import pe.civika.shared.domain.ErrorCivika
 import kotlin.test.Test
@@ -26,7 +27,7 @@ class DetalleViewModelTest : PruebaViewModel() {
         assertEquals("CVK-000109", detalle.incidente.codigo)
         assertTrue(detalle.historial.isNotEmpty())
         assertTrue(detalle.comentarios.isNotEmpty())
-        assertEquals("Municipalidad del distrito piloto", detalle.entidad)
+        assertEquals(ENTIDAD_PILOTO, detalle.entidad)
     }
 
     @Test

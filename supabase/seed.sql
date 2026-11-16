@@ -21,11 +21,22 @@ set nombre = excluded.nombre,
     plazo_objetivo_dias = excluded.plazo_objetivo_dias,
     activa = true;
 
+-- Renombra las entidades de la primera versión del seed (sin esto, el insert de abajo crearía filas nuevas y las
+-- reglas de ruteo seguirían apuntando a las viejas). Los nombres llevan «(simulada)»: ninguna entidad real recibe estos
+-- reportes (ADR-12). Solo renombra si el nombre nuevo no existe todavía; si alguien ya creó una entidad con ese nombre
+-- a mano, hay que fusionarlas a mano.
+update public.entidades set nombre = 'Municipalidad de Lima (simulada)'
+where nombre = 'Municipalidad del distrito piloto'
+  and not exists (select 1 from public.entidades where nombre = 'Municipalidad de Lima (simulada)');
+update public.entidades set nombre = 'Servicio de limpieza pública (simulado)'
+where nombre = 'Concesionaria de residuos del distrito piloto'
+  and not exists (select 1 from public.entidades where nombre = 'Servicio de limpieza pública (simulado)');
+
 insert into public.entidades (nombre, tipo)
 values
-    ('Municipalidad del distrito piloto', 'municipalidad'),
+    ('Municipalidad de Lima (simulada)', 'municipalidad'),
     ('Universidad Nacional Mayor de San Marcos', 'universidad'),
-    ('Concesionaria de residuos del distrito piloto', 'operador')
+    ('Servicio de limpieza pública (simulado)', 'operador')
 on conflict (nombre) do update set tipo = excluded.tipo;
 
 with campus as (
@@ -226,7 +237,7 @@ set tipo = excluded.tipo,
     geom = excluded.geom;
 
 -- Ruteo: el campus va a la universidad; el resto se reparte entre la
--- municipalidad y la concesionaria de residuos.
+-- municipalidad y el servicio de limpieza pública (los dos simulados).
 insert into public.reglas_ruteo (categoria_id, zona_id, entidad_id)
 select c.id, z.id, e.id
 from public.categorias c
@@ -239,7 +250,7 @@ insert into public.reglas_ruteo (categoria_id, zona_id, entidad_id)
 select c.id, z.id, e.id
 from public.categorias c
 cross join public.zonas z
-join public.entidades e on e.nombre = 'Municipalidad del distrito piloto'
+join public.entidades e on e.nombre = 'Municipalidad de Lima (simulada)'
 where z.nombre = 'Alrededores de la Ciudad Universitaria'
   and c.service_code in ('vial', 'accesibilidad')
 on conflict (categoria_id, zona_id) do update set entidad_id = excluded.entidad_id;
@@ -248,7 +259,7 @@ insert into public.reglas_ruteo (categoria_id, zona_id, entidad_id)
 select c.id, z.id, e.id
 from public.categorias c
 cross join public.zonas z
-join public.entidades e on e.nombre = 'Concesionaria de residuos del distrito piloto'
+join public.entidades e on e.nombre = 'Servicio de limpieza pública (simulado)'
 where z.nombre = 'Alrededores de la Ciudad Universitaria'
   and c.service_code = 'residuos'
 on conflict (categoria_id, zona_id) do update set entidad_id = excluded.entidad_id;
