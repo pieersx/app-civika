@@ -7,6 +7,8 @@ import pe.civika.app.FakeToken
 import pe.civika.app.Mundo
 import pe.civika.app.PruebaViewModel
 import pe.civika.app.ui.theme.ModoTema
+import pe.civika.shared.data.AuthRepository
+import pe.civika.shared.domain.ErrorCivika
 import pe.civika.shared.domain.EstadoEnvio
 import pe.civika.shared.domain.EstadoSesion
 import pe.civika.shared.domain.ReportePendiente
@@ -94,5 +96,19 @@ class PerfilViewModelTest : PruebaViewModel() {
 
         assertEquals(EstadoSesion.SinSesion, mundo.auth.sesion.value)
         assertTrue(mundo.cola.todos().isEmpty())
+    }
+
+    @Test
+    fun siCerrarSesionFallaElCelularSigueRecibiendoAvisos() = runTest {
+        mundo.notificaciones.registrarDispositivo(token.token!!)
+        val sinRed = object : AuthRepository by mundo.auth {
+            override suspend fun cerrarSesion() = throw ErrorCivika.SinConexion()
+        }
+        val vmSinRed = PerfilViewModel(sinRed, mundo.notificaciones, mundo.cola, mundo.fotos, token, ajustes)
+
+        vmSinRed.cerrarSesion()
+
+        assertEquals(setOf(token.token), mundo.notificaciones.dispositivos())
+        assertTrue(mundo.auth.sesion.value is EstadoSesion.Activa)
     }
 }

@@ -74,8 +74,16 @@ class PerfilViewModel(
     /** Cierra la sesión y le quita a este celular el aviso de la cuenta (borra el token de `dispositivos`). */
     fun cerrarSesion() {
         trabajar {
-            quitarToken()
-            auth.cerrarSesion()
+            val token = quitarToken()
+            try {
+                auth.cerrarSesion()
+            } catch (e: CancellationException) {
+                throw e
+            } catch (e: Exception) {
+                // La sesión sigue abierta: el celular debe seguir recibiendo los avisos de esta cuenta.
+                restaurarToken(token)
+                throw e
+            }
         }
     }
 
@@ -83,8 +91,15 @@ class PerfilViewModel(
     fun eliminarCuenta() {
         trabajar {
             val usuario = auth.sesion.value.usuario
-            quitarToken()
-            auth.eliminarCuenta()
+            val token = quitarToken()
+            try {
+                auth.eliminarCuenta()
+            } catch (e: CancellationException) {
+                throw e
+            } catch (e: Exception) {
+                restaurarToken(token)
+                throw e
+            }
             if (usuario != null) {
                 runCatchingSinCancelar {
                     cola.observar(usuario.id).first().forEach {
@@ -98,11 +113,21 @@ class PerfilViewModel(
 
     fun errorMostrado() = local.update { it.copy(error = null) }
 
-    private suspend fun quitarToken() {
+    /** Quita el token de este celular y lo devuelve, para volver a registrarlo si la operación falla. */
+    private suspend fun quitarToken(): String? {
+        var quitado: String? = null
         runCatchingSinCancelar {
             val token = tokens.actual() ?: return@runCatchingSinCancelar
             notificaciones.eliminarDispositivo(token)
+            quitado = token
         }
+        return quitado
+    }
+
+    private suspend fun restaurarToken(token: String?) {
+        // Solo si la sesión sigue abierta: sin ella el servidor rechazaría el registro.
+        if (token == null || auth.sesion.value.usuario == null) return
+        runCatchingSinCancelar { notificaciones.registrarDispositivo(token) }
     }
 
     private fun trabajar(accion: suspend () -> Unit) {
