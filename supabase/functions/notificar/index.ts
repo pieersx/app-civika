@@ -33,6 +33,16 @@ const ETIQUETA_ESTADO: Record<string, string> = {
   rechazado: "Rechazado",
 };
 
+/**
+ * ¿El rechazo de FCM significa que el token ya no sirve? Solo entonces se borra de `dispositivos`.
+ * FCM devuelve 400 INVALID_ARGUMENT también por un mensaje mal armado, y 404 también por un
+ * proyecto equivocado: borrar tokens por eso dejaría a todos sin avisos.
+ */
+export function tokenInvalido(status: number, detalle: string): boolean {
+  if (detalle.includes("UNREGISTERED")) return true;
+  return status === 400 && detalle.includes("INVALID_ARGUMENT") && detalle.includes("message.token");
+}
+
 /** Texto del aviso. Se habla de «tú» y sin datos personales (docs/diseno/direccion-visual.md). */
 export function redactar(n: Notificacion, codigo: string | null): { titulo: string; cuerpo: string } {
   const ref = codigo ? `El reporte ${codigo}` : "Tu reporte";
@@ -177,17 +187,17 @@ async function manejar(req: Request): Promise<Response> {
     });
     if (r.ok) {
       enviados++;
-    } else if (r.status === 404 || r.status === 400) {
-      // Token caducado o desinstalado: se borra para no reintentar en cada aviso.
+    } else {
       const detalle = await r.text();
-      if (r.status === 404 || detalle.includes("UNREGISTERED") || detalle.includes("INVALID_ARGUMENT")) {
+      if (tokenInvalido(r.status, detalle)) {
+        // Token caducado o desinstalado: se borra para no reintentar en cada aviso.
         await fetch(`${rest}/dispositivos?fcm_token=eq.${encodeURIComponent(fcm_token)}`, {
           method: "DELETE",
           headers: cabeceras,
         });
+      } else {
+        console.error(`FCM respondió ${r.status} para la notificación ${n.id}`);
       }
-    } else {
-      console.error(`FCM respondió ${r.status} para la notificación ${n.id}`);
     }
   }));
 
