@@ -39,6 +39,16 @@ val claveFirma = datoDeFirma("keyPassword", "ANDROID_KEY_PASSWORD")
 val hayFirma = listOf(almacenFirma, claveAlmacen, aliasFirma, claveFirma).all { it != null } &&
     file(almacenFirma!!).exists()
 
+// La versión sale de la etiqueta del release (-Pcivika.versionName=0.2.0). El versionCode se deriva de ella
+// (mayor * 1.000.000 + menor * 1.000 + parche) para que cada versión nueva pueda instalarse sobre la anterior.
+// Solo se admite MAYOR.MENOR.PARCHE, con hasta 3 cifras cada uno: una etiqueta con sufijo (-rc1) daría el mismo
+// código que la final y no se podría actualizar.
+val versionNombre = providers.gradleProperty("civika.versionName").orElse("0.1.0").get()
+val versionCodigo = Regex("""^(\d{1,3})\.(\d{1,3})\.(\d{1,3})$""").find(versionNombre)
+    ?.destructured
+    ?.let { (mayor, menor, parche) -> mayor.toInt() * 1_000_000 + menor.toInt() * 1_000 + parche.toInt() }
+    ?: error("civika.versionName debe ser MAYOR.MENOR.PARCHE, con hasta 3 cifras cada uno (recibido: $versionNombre)")
+
 fun comoLiteral(texto: String) = "\"" + texto.replace("\\", "\\\\").replace("\"", "\\\"") + "\""
 
 android {
@@ -49,8 +59,8 @@ android {
         applicationId = "pe.civika.app"
         minSdk = libs.versions.android.minSdk.get().toInt()
         targetSdk = libs.versions.android.targetSdk.get().toInt()
-        versionCode = 1
-        versionName = "0.1.0"
+        versionCode = versionCodigo
+        versionName = versionNombre
 
         // Solo español: evita empaquetar las traducciones de las librerías.
         androidResources.localeFilters += "es"

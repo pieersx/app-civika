@@ -106,7 +106,8 @@ Convertir un archivo a base64 para un secreto de GitHub:
   `supabase.url` o `supabase.anonKey`).
 - [ ] Para compilar en GitHub: cargar los secretos de la tabla del §0 y subir una etiqueta
   (`git tag v0.2.0 && git push origin v0.2.0`). El workflow `release.yml` publica el APK firmado como GitHub Release.
-- [ ] `versionCode` sube en cada entrega; `versionName` sigue `0.MINOR.PATCH`.
+- [ ] La versión sale de la etiqueta: `v0.2.0` da `versionName` 0.2.0 y `versionCode` 2000 (mayor × 1.000.000 + menor × 1.000 + parche).
+  Solo se admite `vMAYOR.MENOR.PARCHE`, sin sufijos como `-rc1`; `release.yml` rechaza otras etiquetas y no publica un APK sin firmar.
 
 ## 5. Secretos y respaldos
 
