@@ -119,6 +119,6 @@ sacan con `adb exec-out screencap -p > captura.png`.
 3. `/code-review` → PR.
 
 **Alex: panel web (issue #5)**
-1. «Usa context7 para Compose Multiplatform wasmJs: configuración del módulo y navegación».
+1. «Usa context7 para React Router y TanStack Query: rutas protegidas y caché de las RPC de Supabase».
 2. Pantalla de incidentes con los datos fake de `shared` → prueba de humo con Playwright MCP.
 3. Indicadores con `dataviz` → `/code-review` → PR.

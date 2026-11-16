@@ -1,0 +1,10 @@
+# Copia este archivo como `local.properties` (no se sube al repo) y completa los valores.
+
+# Ruta del SDK de Android. Android Studio la escribe sola; a mano solo si compilas por consola.
+# sdk.dir=C\:\\Users\\tu-usuario\\AppData\\Local\\Android\\Sdk
+
+# Supabase: URL del proyecto y clave pública `anon` (nunca la `service_role`).
+# Local con emulador: http://10.0.2.2:54321 y la ANON_KEY que muestra `supabase status -o env`.
+# Si quedan vacías, la app arranca en modo demostración con datos de ejemplo.
+supabase.url=
+supabase.anonKey=

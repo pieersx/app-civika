@@ -5,4 +5,10 @@
     <issue id="ObsoleteSdkInt">
         <ignore path="src/main/res/mipmap-anydpi-v26" />
     </issue>
+    <!-- Estos textos llevan un número que no concuerda con la palabra siguiente de otra forma: «Al menos 8 caracteres»
+         y «hasta 3 fotos» nunca valen 1; «n de 2000 caracteres» y «Foto n del problema» no son cantidades.
+         Los textos que sí cambian con 1 (días, apoyos) ya son plurals. -->
+    <issue id="PluralsCandidate">
+        <ignore regexp="contrasena_ayuda|foto_texto|foto_cd|detalle_foto_cd|descripcion_ayuda" />
+    </issue>
 </lint>

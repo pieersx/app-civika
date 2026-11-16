@@ -8,7 +8,7 @@ Este documento cubre la **fase 3 (Desarrollo del MVP)** y las **fases 4 y 5 (pru
 - **Equipo:** 5 integrantes de nivel intermedio en Kotlin y Android, aprobado por el docente (el enunciado dice
   4 como máximo). Conviene guardar el mensaje o el correo donde lo confirma. Pieers es el tech lead.
 - **Fechas tentativas:** del 26 de octubre al 20 de diciembre de 2026. Se ajustan al calendario del curso.
-- **Stack:** Kotlin Multiplatform (`shared`, `androidApp` y `webPanel`) + Supabase. Ver
+- **Stack:** Kotlin Multiplatform (`shared` y `androidApp`), panel web en React (`webPanel`, ADR-17) + Supabase. Ver
   [arquitectura.md](arquitectura.md#8-estructura-de-módulos-kotlin-multiplatform).
 - **Zona piloto:** Ciudad Universitaria de la UNMSM y alrededores
   ([ADR-12](arquitectura.md#adr-12-zona-piloto-ciudad-universitaria-de-la-unmsm)).
@@ -45,7 +45,7 @@ Orden de trabajo de la interfaz:
 | **Emily** | UI/UX y design system | Dirección visual y mockup; tema Material 3 y componentes; Splash, Login/Registro (con consentimiento de datos), Home, Perfil y «Mis reportes»; accesibilidad | RF-01, RF-12; RNF-01, RNF-05 (consentimiento), RNF-07 |
 | **Valeria** | Flujo de reporte | CameraX (hasta 3 fotos); ubicación con Fused Location y ajuste en el mapa; categoría y descripción; pantalla de duplicados; subida a Storage; trabajo sin conexión con Room + WorkManager; extra: categoría sugerida con ML Kit | RF-02, RF-03, RF-04, RF-15; RNF-01, RNF-11 |
 | **Keyla** | Mapa e incidentes | Mapa (MapLibre con teselas de OpenFreeMap, ver ADR-3) con marcadores por categoría y estado y filtros; detalle del incidente; historial de estados; botón «Apoyar» | RF-07, RF-08, RF-10; RNF-02 |
-| **Alex** | Panel web y notificaciones | `webPanel` en Compose Multiplatform, Kotlin/Wasm (login, lista de incidentes, cambio de estado y comentarios, moderación); Edge Function + FCM; indicadores por zona, incluido «% dentro del plazo» | RF-11, RF-13, RF-14, RF-16 |
+| **Alex** | Panel web y notificaciones | `webPanel` en React + TypeScript desde noviembre (ADR-17; antes, Compose Web): login con MFA, lista de incidentes, cambio de estado y comentarios, moderación; Edge Function + FCM; indicadores por zona, incluido «% dentro del plazo» | RF-11, RF-13, RF-14, RF-16 |
 
 **¿Por qué este reparto?** A Pieers le toca la lógica geoespacial (duplicados, ruteo y prioridad), que es la parte más
 difícil y la que el Entregable 1 presenta como innovación. Cada uno de los demás tiene un módulo vertical, es decir,

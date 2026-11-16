@@ -3,7 +3,9 @@
 App de reporte de incidencias urbanas (UNMSM, Desarrollo de Sistemas Móviles 2026-II). Responde en español.
 
 ## Stack
-- **Kotlin Multiplatform**: `shared/` (dominio y datos), `androidApp/` (Compose) y `webPanel/` (Compose Web, Wasm).
+- **Kotlin Multiplatform**: `shared/` (dominio y datos) y `androidApp/` (Compose).
+- **Panel web**: `webPanel/` en React + Vite + TypeScript, Tailwind, TanStack Query y supabase-js (ADR-17). No es Kotlin
+  ni parte del build de Gradle.
 - **Backend**: Supabase (PostgreSQL + PostGIS, Auth, Storage, Edge Functions) en `supabase/`.
 - DI con **Koin** (no Hilt). Red con **supabase-kt** sobre Ktor (no Retrofit).
 - Solo en Android: Room, CameraX, MapLibre Native (teselas de OpenFreeMap), WorkManager, FCM y ML Kit.
@@ -16,14 +18,16 @@ App de reporte de incidencias urbanas (UNMSM, Desarrollo de Sistemas Móviles 20
 - `docs/entregables-1-y-2.md` es histórico: **no** lo uses como fuente de decisiones vigentes.
 
 ## Reglas
-- Antes de añadir o actualizar una dependencia, **consulta context7** y fija la versión en `gradle/libs.versions.toml`.
-- Las reglas de negocio van en `shared/src/commonMain/.../domain`, sin dependencias de Android ni del navegador.
+- Antes de añadir o actualizar una dependencia, **consulta context7** y fija la versión en `gradle/libs.versions.toml`
+  (Kotlin) o en `webPanel/package.json` (panel).
+- Las reglas de negocio van en `shared/src/commonMain/.../domain`, sin dependencias de Android. El panel no las
+  duplica como fuente de verdad: las hacen cumplir las RPC.
 - Los ViewModels solo usan interfaces de repositorio; cada repositorio tiene su implementación `Fake…`.
 - Tests primero. Dominio con `kotlin.test` en `commonTest`; base de datos con pgTAP.
 - El esquema solo cambia con migraciones en `supabase/migrations/`. Toda función `security definer` lleva
   `set search_path = ''` y `revoke execute … from public, anon`.
-- Nunca leas ni modifiques `.env`, `local.properties` ni `google-services.json`. La clave `service_role` jamás va en
-  `androidApp/` ni en `webPanel/`.
+- Nunca leas ni modifiques `.env`, `.env.local`, `local.properties`, `keystore.properties` ni `google-services.json`
+  (las plantillas `*.example` sí se editan). La clave `service_role` jamás va en `androidApp/` ni en `webPanel/`.
 - Accesibilidad: áreas táctiles de 48 dp o más, contraste AA y el estado nunca se comunica solo con color.
 
 ## Git
@@ -37,8 +41,9 @@ App de reporte de incidencias urbanas (UNMSM, Desarrollo de Sistemas Móviles 20
 - No asignes reviewers ni assignees sin confirmar el roster del equipo.
 
 ## Comandos
-- Tests rápidos del dominio: `./gradlew :shared:jvmTest`. Todos (JVM y Wasm): `./gradlew :shared:allTests`
+- Tests rápidos del dominio: `./gradlew :shared:jvmTest`. Todos: `./gradlew :shared:allTests`
 - Versiones: `gradle/libs.versions.toml` (Kotlin, Compose Multiplatform, AGP 9 con el plugin Android-KMP, Koin)
 - App: `./gradlew :androidApp:lint :androidApp:testDebugUnitTest`
-- Panel: `./gradlew :webPanel:wasmJsBrowserDevelopmentRun`
-- Base de datos: `supabase start` y `supabase test db`
+- Panel (dentro de `webPanel/`): `pnpm dev`, y antes de un PR `pnpm typecheck && pnpm lint && pnpm test && pnpm build`
+- Base de datos: `supabase start` y `supabase test db` (con una base sin `demo.sql`: tras `supabase db reset`)
+- Variables de entorno y despliegue: `docs/despliegue.md`

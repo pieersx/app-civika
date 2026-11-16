@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Ícono de la barra de estado: la señal de peligro de la marca, en una sola tinta. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+    <path
+        android:fillColor="#FFFFFFFF"
+        android:pathData="M12,2L22,20L2,20Z M11,9L13,9L13,14L11,14Z M11,16L13,16L13,18L11,18Z"
+        android:fillType="evenOdd" />
+</vector>

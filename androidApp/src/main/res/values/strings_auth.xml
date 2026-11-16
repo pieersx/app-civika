@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="bienvenida_titulo">Reporta lo que ves en tu barrio</string>
+    <string name="bienvenida_texto">Cívika te ayuda a avisar de baches, basura y barreras de accesibilidad en la Ciudad Universitaria. Tus vecinos lo apoyan y la entidad responsable lo atiende.</string>
+    <string name="iniciar_sesion">Iniciar sesión</string>
+    <string name="crear_cuenta">Crear cuenta</string>
+    <string name="explorar_sin_cuenta">Explorar sin cuenta</string>
+    <string name="login_motivo">Para esto necesitas una cuenta. Inicia sesión o crea una; toma menos de un minuto.</string>
+    <string name="correo">Correo</string>
+    <string name="contrasena">Contraseña</string>
+    <string name="contrasena_ayuda">Al menos %1$d caracteres.</string>
+    <string name="nombre">Nombre</string>
+    <string name="olvide_contrasena">Olvidé mi contraseña</string>
+    <string name="no_tengo_cuenta">No tengo cuenta. Crear una</string>
+    <string name="ya_tengo_cuenta">Ya tengo cuenta. Iniciar sesión</string>
+    <string name="consentimiento_texto">Acepto la política de privacidad (versión %1$s). Incluye que la ubicación de tus reportes se envía a Nominatim (OpenStreetMap) para obtener la dirección aproximada.</string>
+    <string name="consentimiento_obligatorio">Para crear tu cuenta tienes que aceptar la política de privacidad.</string>
+    <string name="leer_politica">Leer la política de privacidad</string>
+    <string name="revisa_correo_titulo">Revisa tu correo</string>
+    <string name="revisa_correo_texto">Te enviamos un enlace de confirmación a %1$s. Ábrelo y después inicia sesión. Si no lo ves, mira en la carpeta de spam.</string>
+    <string name="ya_confirme_iniciar_sesion">Ya confirmé mi correo</string>
+    <string name="recuperar_titulo">Recuperar contraseña</string>
+    <string name="recuperar_texto">Escribe el correo de tu cuenta y te enviaremos un enlace para elegir una contraseña nueva.</string>
+    <string name="recuperar_enviado">Si %1$s tiene una cuenta, te enviamos un enlace para cambiar la contraseña. Revisa tu correo.</string>
+    <string name="enviar_enlace">Enviar enlace</string>
+    <string name="volver_a_iniciar_sesion">Volver a iniciar sesión</string>
+
+    <string name="politica_titulo">Política de privacidad</string>
+    <string name="politica_version">Versión %1$s</string>
+    <string name="politica_p1_titulo">Qué datos guardamos</string>
+    <string name="politica_p1">Tu nombre, tu correo y, si lo eliges, tu zona habitual. De cada reporte guardamos las fotos, el punto en el mapa, la categoría y tu descripción.</string>
+    <string name="politica_p2_titulo">Qué ve el público</string>
+    <string name="politica_p2">El mapa y las listas nunca muestran quién reportó. La ubicación pública se redondea a unos 10 metros. Solo la entidad responsable y la moderación ven el punto exacto.</string>
+    <string name="politica_p3_titulo">Fotos</string>
+    <string name="politica_p3">Antes de enviarlas, la app vuelve a codificar cada foto y borra sus metadatos, incluida la ubicación de la cámara. Se guardan en un espacio privado y solo se leen con enlaces que vencen a los 10 minutos.</string>
+    <string name="politica_p4_titulo">Servicios externos</string>
+    <string name="politica_p4">Para obtener la dirección aproximada, la ubicación de cada reporte confirmado se envía a Nominatim (OpenStreetMap). El mapa usa teselas de OpenFreeMap con datos de OpenStreetMap.</string>
+    <string name="politica_p5_titulo">Tus derechos</string>
+    <string name="politica_p5">Puedes cambiar tu nombre y eliminar tu cuenta cuando quieras desde Perfil, según la Ley 29733. Al eliminarla, tus datos personales se borran; los reportes y apoyos se conservan sin tu identidad porque forman parte de incidentes públicos.</string>
+    <string name="politica_p6_titulo">Cívika no es un canal de emergencias</string>
+    <string name="politica_p6">Si hay peligro, llama al 105 (Policía) o al 116 (Bomberos). Los reportes de Cívika no se atienden de inmediato.</string>
+</resources>

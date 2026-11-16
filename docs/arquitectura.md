@@ -31,7 +31,7 @@ mismo bache, hay 1 incidente con 30 apoyos (o con varios reportes), no 30 incide
 ```mermaid
 flowchart LR
   ciudadano([Ciudadano]) -->|reporta, apoya, consulta| app[App Android<br/>Kotlin + Compose]
-  personal([Personal de la entidad]) -->|cambia estados, comenta| panel[Panel web<br/>Compose Web, Kotlin/Wasm]
+  personal([Personal de la entidad]) -->|cambia estados, comenta| panel[Panel web<br/>React + TypeScript]
   moderador([Moderador]) -->|revisa denuncias| panel
   app -->|HTTPS / JSON| supa[(Supabase)]
   panel -->|HTTPS / JSON| supa
@@ -44,8 +44,9 @@ flowchart LR
 
 ## 3. Contenedores
 
-Todo el cliente es **Kotlin Multiplatform**: un módulo `shared` con el dominio y el acceso a datos, que usan la app
-Android y el panel web.
+La app Android es **Kotlin Multiplatform**: un módulo `shared` con el dominio y el acceso a datos, y `androidApp` con
+la interfaz. El panel web es una aplicación **React + TypeScript** aparte (ADR-17) que habla con el mismo Supabase; las
+reglas que comparte con la app (transiciones de estado, prioridad) las hace cumplir el servidor en SQL.
 
 ```mermaid
 flowchart TB
@@ -67,8 +68,8 @@ flowchart TB
     cola --> room
     wm --> room
   end
-  subgraph web[webPanel]
-    uiw[UI Compose Web + ViewModels] --> repo
+  subgraph web[webPanel: React + TypeScript]
+    uiw[Vistas + TanStack Query] --> sjs[supabase-js]
   end
   subgraph supabase[Supabase]
     auth[Auth]
@@ -76,10 +77,11 @@ flowchart TB
     rpc[Funciones RPC en SQL<br/>duplicados, ruteo, prioridad, estados]
     db[(PostgreSQL + PostGIS)]
     sto[Storage: fotos]
-    hook[Database Webhook]
+    hook[Trigger + pg_net]
     ef[Edge Function: notificar]
   end
   skt --> auth & rest & sto
+  sjs --> auth & rest & sto
   rest --> rpc --> db
   db --> hook --> ef -->|FCM HTTP v1| fcm[FCM]
 ```
@@ -158,7 +160,7 @@ final) o cuando la entidad dice que no le corresponde.
 |---|---|---|
 | Reportado → Derivado | Sistema, dentro de `crear_reporte` | Notifica al autor |
 | Reportado → En revisión | Sistema (no hay regla de ruteo) | Aparece en la cola de moderación |
-| Derivado o En atención → En revisión | Sistema (al recibir una denuncia) o la entidad | Aparece en la cola de moderación |
+| Derivado o En atención → En revisión | Sistema (con 3 denuncias pendientes de vecinos distintos, ADR-21) o la entidad | Aparece en la cola de moderación. Si lo mueve el Sistema, conserva la entidad para poder restaurarlo |
 | En revisión → Derivado | Moderador | Notifica a los seguidores |
 | En revisión → Rechazado | Moderador | Notifica al autor con el motivo. Si es duplicado, se llena `duplicado_de` y sus reportes pasan al incidente original |
 | Derivado → En atención | Personal de la entidad asignada | Notifica a los seguidores |
@@ -456,7 +458,7 @@ L = leer, E = escribir, «RPC» = solo a través de una función que valida las 
 | Historial público (RPC) | L | L | L | L |
 | `incidentes` (tabla) | — | E vía RPC | L los de su entidad; cambia estado vía RPC | L; cambia estado vía RPC |
 | `reportes` | — | L los propios; E vía RPC | L vía `reportes_entidad` | L |
-| `fotos` (URL firmada vía RPC) | L si no está oculta | L; E en su carpeta `{uid}/` | L | L; puede ocultarlas |
+| `fotos` (URL firmada con el JWT propio, ADR-19) | L si no está oculta ni el incidente rechazado | Igual, más las propias; E en su carpeta `{uid}/` | L las no ocultas de su entidad | L todas; puede ocultarlas (`ocultar_foto`) |
 | `apoyos` | — | E vía RPC y borrar el propio | — | L |
 | `denuncias` | — | E | — | L y E |
 | `verificaciones` | — | E la propia (si sigue el incidente) | — | L |
@@ -483,7 +485,8 @@ cambia nada de B.
 
 ## 8. Estructura de módulos (Kotlin Multiplatform)
 
-Un solo proyecto Gradle en la raíz del repo, con tres módulos (ADR-9):
+Un proyecto Gradle en la raíz del repo con dos módulos (`shared` y `androidApp`, ADR-9) y, aparte, el panel web como
+proyecto de Node en `webPanel/` (ADR-17):
 
 ```
 app-civika/
@@ -494,9 +497,8 @@ app-civika/
 │     │  ├─ domain/              Incidente, Estado, Categoria, TransicionesEstado, Prioridad, Validaciones
 │     │  ├─ data/                IncidenteRepository (interfaz), implementación con supabase-kt, Fake…
 │     │  └─ di/                  módulos de Koin compartidos
-│     ├─ commonTest/             kotlin.test: estados, prioridad, validaciones, repos fake
-│     ├─ androidMain/            motor Ktor OkHttp y lo específico de Android
-│     └─ wasmJsMain/             motor Ktor Js
+│     ├─ commonTest/             kotlin.test: estados, prioridad, validaciones, repos fake (corre en JVM)
+│     └─ androidMain/            motor Ktor OkHttp y lo específico de Android
 ├─ androidApp/                   App del ciudadano
 │  └─ src/main/kotlin/pe/civika/app/
 │     ├─ ui/theme/  ui/components/   tokens de docs/diseno y SenalEstado, BotonPrincipal…
@@ -506,10 +508,9 @@ app-civika/
 │     ├─ sync/                   ReporteSyncWorker (WorkManager)
 │     ├─ device/                 CameraX, ubicación, MapLibre, FCM, ML Kit
 │     └─ di/                     módulos de Koin de Android
-├─ webPanel/                     Panel de la entidad y la moderación (Compose Web, Wasm)
-│  └─ src/wasmJsMain/kotlin/pe/civika/panel/
-│     └─ feature/incidentes/ indicadores/ moderacion/
-└─ supabase/                     migraciones SQL, seed, pruebas pgTAP y edge functions
+├─ webPanel/                     Panel de la entidad y la moderación (React + Vite + TypeScript)
+│  └─ src/                       sesión con MFA, incidentes, moderación e indicadores
+└─ supabase/                     migraciones SQL, seed, pruebas pgTAP y edge functions (`functions/notificar`)
 ```
 
 Reglas:
@@ -518,8 +519,9 @@ Reglas:
 - Los ViewModels viven en cada app, porque las pantallas son distintas, y solo hablan con las interfaces de `shared/data`.
 - Cada repositorio tiene una implementación `Fake…` en `shared`, para avanzar sin backend y para los tests.
 - Room, CameraX, MapLibre, WorkManager, FCM y ML Kit son solo de Android y no entran en `shared`.
-- El tema visual del panel reutiliza los mismos tokens de `docs/diseno/direccion-visual.md`. Si más adelante se
-  quiere compartir componentes, se crea un módulo `designsystem`; hoy no hace falta.
+- El tema visual del panel reutiliza los mismos tokens de `docs/diseno/direccion-visual.md`, como variables CSS.
+- El panel no importa `shared`: lo que debe coincidir entre la app y el panel (transiciones, prioridad, permisos) lo
+  decide el servidor en las RPC, y el panel solo lo refleja en la interfaz.
 
 ## 9. Entornos
 
@@ -533,9 +535,12 @@ Reglas:
   zonas del piloto.
 - **Keep-alive:** el plan gratis de Supabase pausa el proyecto tras 7 días sin actividad. Una GitHub Action semanal
   hace una consulta liviana al entorno demo, y antes de cada presentación se comprueba que esté activo (ADR-14).
-- La URL y la clave `anon` de Supabase se leen de `local.properties`, que no se sube al repo. Android las recibe por
-  `BuildConfig` y el panel por una configuración que se genera al compilar. El plugin exacto (por ejemplo, BuildKonfig)
-  se decide en el Sprint 1 con context7.
+- La URL y la clave `anon` de Supabase no se suben al repo. Android las lee de `local.properties` (o de las variables
+  de entorno `SUPABASE_URL` y `SUPABASE_ANON_KEY` en el CI) y las recibe por `BuildConfig`; sin ellas arranca en modo
+  demostración con los repositorios fake. El panel las lee de `webPanel/.env.local` (`VITE_SUPABASE_URL` y
+  `VITE_SUPABASE_ANON_KEY`) o de las variables del proyecto en Vercel. Las plantillas son `local.properties.example`,
+  `webPanel/.env.example` y `supabase/functions/.env.example`; la lista completa está en
+  [despliegue.md](despliegue.md).
 
 ## 10. Estrategia de pruebas
 
@@ -546,11 +551,12 @@ Reglas:
 | Datos locales | Room en memoria | DAOs y la cola de reportes pendientes |
 | E2E Android | Compose UI Test (`androidTest`) en emulador | Flujo de reporte completo, apoyo, estados vacío y error, etiquetas de TalkBack |
 | Base de datos | pgTAP (`supabase test db`) | `buscar_duplicados` (en metros), `crear_reporte` (idempotencia, fuera de zona y sin regla), `cambiar_estado` (roles y `version`), RLS con entidades A y B, el trigger que protege `rol` y la RPC pública sin columnas sensibles |
-| E2E panel | Playwright sobre el build de `webPanel`, con capturas comparadas | Carga, login, cambio de estado y moderación |
-| Rendimiento | Chrome DevTools (Lighthouse *performance*, pestaña Network) | Tamaño del Wasm, tiempo hasta la primera pantalla |
+| Panel (lógica) | Vitest + Testing Library en `webPanel` | Filtros, plazos en America/Lima, transiciones por rol y mensajes de error |
+| E2E panel | Playwright sobre el panel, con selectores por rol y texto (es HTML normal) | Login con MFA, cambio de estado, comentarios y moderación |
+| Rendimiento | Chrome DevTools (Lighthouse) | Peso del bundle y tiempo hasta la primera pantalla |
 
 El CI (GitHub Actions) ejecuta en cada PR los tests de `shared` (`allTests`), el lint y los tests de `androidApp`,
-`supabase test db` y el build de `webPanel` (`wasmJsBrowserDistribution`). Los E2E con emulador corren solo en `main`
+`supabase test db` y, en `webPanel`, `typecheck`, `lint`, `test` y `build`. Los E2E con emulador corren solo en `main`
 o en los PR con la etiqueta `e2e`, porque tardan varios minutos (ADR-15).
 
 **Los permisos se prueban en la base de datos, no en la interfaz.** Esconder un botón no es seguridad: lo que impide
@@ -563,9 +569,11 @@ que el personal de la entidad A cambie un incidente de B es el RLS, y eso lo pru
 - **Fotos:** en el celular se comprimen y se vuelven a codificar, lo que **borra el EXIF** (incluido el GPS de la
   cámara, que podría delatar el domicilio). El servidor no confía en eso: el bucket tiene `file_size_limit` de 2 MB y
   `allowed_mime_types` solo `image/jpeg` e `image/webp`.
-- **Storage:** el bucket `fotos` es privado. Las fotos se leen con URLs firmadas que genera la RPC `urls_fotos`, con
-  una duración de 10 minutos y omitiendo las fotos con `oculta = true`. Una URL ya entregada puede seguir funcionando
-  hasta 10 minutos después de ocultar la foto; para una foto grave, el moderador la borra del bucket.
+- **Storage:** el bucket `fotos` es privado. La RPC `fotos_incidente` devuelve las rutas visibles y el cliente pide
+  las URLs firmadas (10 minutos) con su propio JWT; una política de `select` en `storage.objects` decide qué puede
+  firmar cada uno (ADR-19) y deja fuera las fotos con `oculta = true`. Una URL ya entregada puede seguir funcionando
+  hasta 10 minutos después de ocultar la foto; para una foto grave, el moderador la borra del bucket. La ruta contiene
+  el `uid` del autor (un identificador sin nombre ni correo): es la limitación aceptada de esta opción.
 - **Claves:** la app y el panel solo usan la clave `anon`. La `service_role` vive solo en los secretos de las Edge
   Functions.
 - **Datos personales (RNF-05):** el mapa público nunca muestra quién reportó. Se pide consentimiento al registrarse,
@@ -638,6 +646,7 @@ reemplace; no se borra la anterior.
   envío».
 
 ### ADR-7. Notificaciones mediante Database Webhook, Edge Function y FCM
+- **Estado:** actualizado por el ADR-20 (quién escribe la bandeja y cómo se llama a la función).
 - **Contexto:** cada cambio de estado debe avisar a los seguidores del incidente (RF-11).
 - **Decisión:** un webhook sobre el `INSERT` en `historial_estados` llama a la Edge Function `notificar`, que guarda
   la notificación en `notificaciones`, busca los tokens de los seguidores en `dispositivos` y envía con FCM HTTP v1.
@@ -653,6 +662,7 @@ reemplace; no se borra la anterior.
   anti-spam, las denuncias y la posibilidad de ocultar fotos.
 
 ### ADR-9. Kotlin Multiplatform: `shared`, `androidApp` y `webPanel`
+- **Estado:** vigente para `shared` y `androidApp`; la parte del panel (Compose Web sobre Wasm) la reemplaza el ADR-17.
 - **Contexto:** el enunciado del curso exige un proyecto en «Kotlin, sus librerías y marcos de trabajo», y el panel
   estaba planeado en TypeScript. Además, las reglas de negocio (estados, prioridad, validaciones) se iban a escribir
   dos veces.
@@ -710,6 +720,8 @@ reemplace; no se borra la anterior.
   crece, conviene pasar a un plan de pago y quitar esta Action.
 
 ### ADR-15. Estrategia E2E: Compose UI Test en Android y capturas en el panel
+- **Estado:** vigente para Android. La parte del panel deja de aplicar con el ADR-17: al ser HTML normal, Playwright
+  usa selectores por rol y texto, y Lighthouse sí puede auditar la accesibilidad.
 - **Contexto:** Compose Multiplatform para web **dibuja todo en un `<canvas>`**: los botones y textos no existen
   como elementos HTML. Playwright no puede buscar «el botón Guardar» por su texto, y el audit de accesibilidad de
   Lighthouse no ve el contenido. En Android, Compose sí expone un árbol de semántica que las pruebas pueden leer.
@@ -727,6 +739,7 @@ reemplace; no se borra la anterior.
   `shared` y en pgTAP.
 
 ### ADR-16. Panel publicado en Vercel con build en GitHub Actions
+- **Estado:** reemplazado por el ADR-18.
 - **Contexto:** el panel compilado es un sitio estático (HTML, JS y `.wasm`), pero Vercel no trae JDK y no puede
   compilar Kotlin.
 - **Decisión:** GitHub Actions compila `:webPanel:wasmJsBrowserDistribution` y lo sube con `vercel deploy --prebuilt`
@@ -734,6 +747,58 @@ reemplace; no se borra la anterior.
 - **Consecuencias:** las URLs de producción y de vista previa deben estar en las *Redirect URLs* de Supabase Auth, o
   el inicio de sesión fallará solo en el panel publicado. El plan Hobby de Vercel es para uso no comercial: sirve para
   el curso, pero un piloto con una municipalidad necesitaría un plan de pago u otro hosting.
+
+### ADR-17. Panel web en React + TypeScript
+- **Contexto:** Compose Multiplatform para web sigue en Beta y dibuja todo en un `<canvas>`: sin HTML real no hay
+  lectores de pantalla, ni selección de texto, ni búsqueda del navegador, ni pruebas por selectores (ADR-15), y el
+  `.wasm` pesa varios MB para un panel de tablas y formularios. El panel lo usa personal de una entidad en un
+  navegador de escritorio: necesita tablas densas, teclado y accesibilidad de serie.
+- **Decisión:** el panel es una SPA en React + Vite + TypeScript, con Tailwind CSS (tokens de
+  `direccion-visual.md` como variables), TanStack Query, `supabase-js` y MapLibre GL JS. Reemplaza la parte del panel
+  del ADR-9. `shared` deja de compilar a Wasm.
+- **Consecuencias:** el repo ya no es 100 % Kotlin: la app Android (el entregable del curso) sí lo es, y el panel es
+  una herramienta de apoyo en la tecnología habitual de la web. **Si el docente exige que todo sea Kotlin, hay que
+  consultarlo antes de la entrega.** Las reglas no se duplican en TypeScript como fuente de verdad: las RPC validan
+  transiciones, roles y versión, y el panel solo decide qué botones mostrar. El trabajo previo en Compose Web
+  (PR #38) queda como referencia de pantallas y flujos.
+
+### ADR-18. Panel desplegado en Vercel con su build nativo
+- **Contexto:** con el ADR-17 el panel es un proyecto de Node que Vercel sabe compilar.
+- **Decisión:** el proyecto de Vercel se conecta al repo con *Root Directory* `webPanel`; Vercel compila
+  (`pnpm build`) y publica `dist` en cada push: `main` a producción y cada PR a una vista previa. Las variables
+  `VITE_SUPABASE_URL` y `VITE_SUPABASE_ANON_KEY` se definen en el proyecto de Vercel. Reemplaza al ADR-16.
+- **Consecuencias:** ya no hacen falta `VERCEL_TOKEN` ni un workflow de despliegue. Las URLs de producción y de
+  vista previa siguen teniendo que estar en las *Redirect URLs* de Supabase Auth. Sigue valiendo la nota del plan
+  Hobby (uso no comercial).
+
+### ADR-19. Lectura de fotos con política de `select` y URL firmada por el cliente
+- **Contexto:** PostgreSQL no puede firmar URLs de Storage, así que la RPC `urls_fotos` que preveía el §11 no es
+  posible tal cual (issue #32).
+- **Decisión:** la opción B del issue. `private.puede_ver_foto(ruta)` decide quién lee cada objeto del bucket (el
+  autor, cualquiera si la foto no está oculta y el incidente no fue rechazado, y moderación con MFA); una política
+  de `select` en `storage.objects` la aplica; `fotos_incidente` y `fotos_incidente_panel` devuelven las rutas, y el
+  cliente pide `createSignedUrls` con su propio JWT.
+- **Consecuencias:** no se usa `service_role` y todo se prueba con pgTAP. La ruta incluye el `uid` del autor, un
+  identificador opaco: quien inspeccione la red podría saber que dos fotos son de la misma persona, pero no quién es.
+  Si eso deja de ser aceptable, las fotos pasan a servirse por una Edge Function.
+
+### ADR-20. La base de datos escribe la bandeja y llama a `notificar`
+- **Contexto:** en el ADR-7 la Edge Function guardaba la notificación. Si FCM o la función fallaban, el ciudadano se
+  quedaba sin aviso también dentro de la app.
+- **Decisión:** dos triggers (sobre `historial_estados` y sobre los comentarios públicos) insertan en
+  `notificaciones` a cada seguidor activo, excepto a quien hizo el cambio. Otro trigger sobre `notificaciones` llama
+  a la Edge Function con `pg_net`; la URL y el secreto compartido se leen de Vault, y la función solo envía el push.
+- **Consecuencias:** la bandeja funciona sin Firebase. El push sigue sin bloquear la transacción. Hay dos secretos
+  de Vault por entorno (`notificar_url` y `notificar_secret`); sin ellos no se envía nada y no falla nada.
+
+### ADR-21. Tres denuncias para enviar un incidente a revisión
+- **Contexto:** el §5 decía que una denuncia bastaba para pasar un incidente a En revisión. Así, una sola persona
+  podía sacar del flujo de la entidad cualquier incidente.
+- **Decisión:** hay una denuncia por persona e incidente, y el Sistema lo envía a En revisión cuando acumula 3
+  denuncias pendientes (el mismo umbral que la reapertura por «sigue igual»). Moderación ve todas las denuncias
+  desde la primera y puede actuar antes.
+- **Consecuencias:** un reporte ofensivo con menos de 3 denuncias sigue visible hasta que moderación lo revise; lo
+  mitiga que la cola de denuncias no espera al umbral.
 
 ## 13. Cambios respecto a los entregables
 
@@ -748,7 +813,7 @@ sirve para justificar los cambios en el Entregable 3.
 
 | Lo que decía el entregable | Lo que se hace | Por qué |
 |---|---|---|
-| Panel web básico (tecnología sin definir) | Panel en Compose Multiplatform (Kotlin/Wasm) | El curso exige Kotlin; se comparte código con la app (ADR-9) |
+| Panel web básico (tecnología sin definir) | Primero Compose Multiplatform (ADR-9); desde noviembre, React + TypeScript (ADR-17) | La app es Kotlin; el panel necesita HTML real, accesible y ligero |
 | Retrofit para consumir la API | supabase-kt sobre Ktor, multiplataforma | Funciona en Android y en web (ADR-11) |
 | «Funciones de servidor» para duplicados, ruteo y prioridad | Funciones RPC en PostgreSQL; Edge Functions solo para FCM | Atomicidad y PostGIS (ADR-2) |
 | Zona piloto en Lima, sin concretar | Ciudad Universitaria de la UNMSM y alrededores, con entidades simuladas | Hay usuarios reales para las pruebas (ADR-12) |
@@ -759,4 +824,6 @@ sirve para justificar los cambios en el Entregable 3.
 | Validación ciudadana con apoyos | Apoyos + verificación «¿sigue arreglado?» al resolverse | Evita cierres falsos |
 | Todo reporte pasa por moderación | Ruteo automático y moderación por excepción | Lo pide el RF-06 y no frena el flujo (ADR-8) |
 | Roles: ciudadano, moderador y personal de la entidad | Además: cuentas de entidad creadas a mano, MFA, auditoría, desactivación y eliminación de cuenta con anonimización | Seguridad y Ley 29733 (§7.2) |
-| Panel web básico (sin hosting definido) | Panel publicado en Vercel desde GitHub Actions | Hay una URL estable para la demo (ADR-16) |
+| Panel web básico (sin hosting definido) | Panel en React + TypeScript, publicado en Vercel | Accesibilidad, pruebas y despliegue más simples; hay una URL estable para la demo (ADR-17 y ADR-18) |
+| RPC `urls_fotos` que firma las URLs | Política de lectura en Storage y firma en el cliente | PostgreSQL no puede firmar URLs de Storage (ADR-19) |
+| Una denuncia envía el incidente a revisión | Hacen falta 3 denuncias de vecinos distintos | Evita que una sola persona saque un incidente del flujo (ADR-21) |

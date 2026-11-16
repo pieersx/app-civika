@@ -59,5 +59,5 @@ copia ejemplos de APIs viejas.
 - Nunca se suben secretos: `.env`, `local.properties`, `google-services.json` ni claves de Supabase.
   El repo es **público**.
 - La clave `service_role` de Supabase solo se guarda en los secretos de las Edge Functions. Nunca va en `androidApp/` ni en
-  `webPanel/`: el APK y el código Wasm del navegador se pueden descompilar.
+  `webPanel/`: el APK se puede descompilar y el JavaScript del navegador lo lee cualquiera.
 - No se suben datos personales reales, como fotos con rostros o correos de usuarios de prueba.

@@ -12,7 +12,7 @@ Responsables: **P** Pieers · **E** Emily · **V** Valeria · **K** Keyla · **A
 | Alcance demasiado grande | 16 RF, 5 personas y 8 semanas; meter extras rompe el plazo | Nada de cobros, SSO, permisos granulares ni panel de admin en el MVP; recorte en el orden del plan | P | Todos |
 | Mockup sin aprobar | Se programan pantallas dos veces | Aprobar el mockup antes de pulir pantallas (issue #2) | E | 1 |
 | Backend vacío | Las pantallas no tienen contra qué conectarse | Migraciones, RLS, seed y pgTAP primero (issue #1); mientras tanto, repos fake | P | 1 |
-| Auth en Wasm y Android | Confirmación de correo, recuperación, sesión y refresco fallan en un solo cliente | Probar login, logout, refresco y recuperación en local y en demo, en ambos clientes | E, A | 2 |
+| Auth en el panel y en Android | Confirmación de correo, recuperación, sesión y refresco fallan en un solo cliente | Probar login, logout, refresco y recuperación en local y en demo, en ambos clientes | E, A | 2 |
 | Correos de Supabase | El correo integrado tiene límites bajos y cae en spam | SMTP propio antes de las pruebas con usuarios (despliegue.md) | P | 3 |
 | Notificaciones en Android 13+ | Vienen apagadas por defecto; sin permiso no llega nada | Pedir `POST_NOTIFICATIONS` después del primer reporte; probar token nuevo, logout y token caducado | A | 3 |
 | Sin conexión | Reportes duplicados o perdidos | `cliente_id` + `ON CONFLICT` (ADR-6), reintentos de WorkManager, prueba con modo avión | V | 3 |
@@ -20,8 +20,8 @@ Responsables: **P** Pieers · **E** Emily · **V** Valeria · **K** Keyla · **A
 | Galería y permisos | Pedir acceso a todas las fotos asusta y Play lo restringe | Photo Picker, que no necesita permiso | V | 2 |
 | Nominatim | Bloquea si se pasa de 1 consulta por segundo o sin User-Agent | Una consulta por reporte confirmado, caché en Room y User-Agent propio (ADR-3) | V | 2 |
 | OpenFreeMap sin SLA | El mapa no carga si el servicio cae | Mensaje claro en el mapa y la URL del estilo configurable para cambiar de proveedor (ADR-3) | K | 2 |
-| Compose Web en Beta | Fallan entradas de texto, navegación o accesibilidad | Probar en Chrome, Edge y Firefox recientes; simplificar la pantalla si algo falla (ADR-9) | A | 2 |
-| Navegadores sin WasmGC | El panel no abre en navegadores antiguos (Safari < 18.2) | Mensaje de «navegador no compatible» en `index.html`; la entidad usa Chrome o Edge | A | 3 |
+| Dos tecnologías de cliente (Kotlin y React) | Una regla cambia en la app y no en el panel, o el docente exige solo Kotlin | Las reglas viven en las RPC, no en los clientes (ADR-17); confirmar con el docente antes de la entrega | A | 2 |
+| Navegadores antiguos | El panel no abre o se ve mal | El build apunta a navegadores recientes; la entidad usa Chrome o Edge actualizados | A | 3 |
 | Pruebas del panel sobre canvas | Playwright y Lighthouse no ven los elementos | Capturas comparadas y pocos E2E de flujos clave (ADR-15) | A | 2 |
 | CI incompleto | Se fusiona algo que rompe la base de datos | Añadir `supabase test db` al CI junto con las migraciones | P | 1 |
 | Zona horaria | «Días abierto» e indicadores desfasados en un día | UTC en la base de datos y cálculos en `America/Lima` (arquitectura §11) | P | 2 |

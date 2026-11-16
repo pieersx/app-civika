@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="mis_reportes_vacio_titulo">Aún no tienes reportes</string>
+    <string name="mis_reportes_vacio_texto">Cuando veas un problema, repórtalo aquí. También aparecerán los que apoyes.</string>
+    <string name="mis_reportes_sin_sesion_titulo">Inicia sesión para ver tus reportes</string>
+    <string name="mis_reportes_sin_sesion_texto">Aquí verás lo que reportes y apoyes, y cómo avanza.</string>
+    <string name="mis_reportes_filtro_vacio_titulo">Ninguno cumple ese filtro</string>
+    <string name="mis_reportes_filtro_vacio_texto">Prueba con otro filtro para ver tus reportes.</string>
+    <string name="mis_reportes_ver_todos">Ver todos</string>
+    <string name="mis_reportes_relacion_autor">Lo reportaste tú</string>
+    <string name="mis_reportes_relacion_apoyo">Lo apoyas</string>
+    <string name="filtro_todos">Todos</string>
+    <string name="filtro_abiertos">Abiertos</string>
+    <string name="filtro_resueltos">Resueltos</string>
+    <string name="filtro_apoyos">Mis apoyos</string>
+    <string name="envio_pendiente">Pendiente de envío</string>
+    <string name="envio_enviando">Enviando</string>
+    <string name="envio_error">No se pudo enviar</string>
+    <string name="envio_enviado">Enviado</string>
+    <string name="envio_descartar">Descartar</string>
+</resources>
